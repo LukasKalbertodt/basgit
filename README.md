@@ -1,2 +1,2 @@
-# stinf
-GitHub like web app to manage structure information
+# BasGit
+GitHub like web app to manage various kinds of information
