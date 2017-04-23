@@ -10,7 +10,7 @@
 # config
 COLS=100
 FOLDER="."
-FILES='.+\.\(rs\|toml\|tera\|hbs\)'
+FILES='.+\.\(rs\|toml\|tera\|hbs\|less\)'
 
 
 # Exit script on the first error

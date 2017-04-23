@@ -7,12 +7,24 @@ You can find a bit more information [in the wiki](https://github.com/LukasKalber
 
 ## Compiling and testing
 
+### Installing compiler and dependencies
+
 First, you have to [install `rustup`](http://rustup.rs/) to manage your Rust compilers.
-After doing that and cloning this repository, change into the clone's folder and set the compiler version for this project (you only have to do this once):
+After doing that and cloning this repository, change into the clone's folder and set the compiler version for this project.
 
 ```
 $ rustup override set nightly
 ```
+
+Additionally you have to install `lessc`, a LESS compiler.
+On Ubuntu, this can be done via:
+
+```
+$ sudo apt install npm     # in case you don't have npm already
+$ npm install -g less
+```
+
+### Compile and run the program
 
 Now, you can simply run the application with:
 
