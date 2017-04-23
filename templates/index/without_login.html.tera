@@ -1,0 +1,9 @@
+{% extends "base" %}
+{% block title %}BasGit{% endblock title %}
+
+{% block content %}
+    <h1>Welcome</h1>
+    <p class="important">
+        Welcome to BasGit!
+    </p>
+{% endblock content %}
