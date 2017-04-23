@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="static/style.css" />
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+<body>
+    <div id="header">{% include "header" %}</div>
+    <div id="content">{% block content %}{% endblock content %}</div>
+    <div id="footer">
+        {% block footer %}
+        &copy; Copyright 2017 by BasGit Developers.
+        {% endblock footer %}
+    </div>
+</body>
+</html>
