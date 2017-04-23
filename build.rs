@@ -49,7 +49,7 @@ fn compile_less(manifest_dir: &Path) {
             errln!(" >> {}", e);
 
             if e.kind() == ErrorKind::NotFound {
-                errln!(">>> Make sure you have installed `lessc` and it's in your $PATH! <<<");
+                errln!("!! Make sure you have installed `lessc` and it's in your $PATH! !!");
             }
             errln!("");
 

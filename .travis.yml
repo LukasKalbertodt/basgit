@@ -2,6 +2,10 @@ language: rust
 rust:
   - nightly
 
+before_install:
+  # - sudo apt-get install npm
+  - npm install -g less
+
 env:
   - RUSTFLAGS="--deny warnings"
 
