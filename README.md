@@ -3,9 +3,9 @@
 GitHub like web app to manage various kinds of information.
 More specific information somewhat soon.
 Maybe.
+You can find a bit more information [in the wiki](https://github.com/LukasKalbertodt/basgit/wiki/Ideas-and-initial-notes).
 
-
-## Try it!
+## Compiling and testing
 
 First, you have to [install `rustup`](http://rustup.rs/) to manage your Rust compilers.
 After doing that and cloning this repository, change into the clone's folder and set the compiler version for this project (you only have to do this once):
@@ -22,7 +22,10 @@ $ cargo run
 
 If compiling fails, you probably need to update your compiler version with `rustup update nightly`.
 
-For anything more than quickly testing, you should compile the application with `cargo run --release` and read [the Rocket guide on this topic](https://rocket.rs/guide/overview/#launching).
+For any kind of production use, you should compile the application with `cargo run --release` and read [the Rocket guide on this topic](https://rocket.rs/guide/overview/#launching).
+For development, I found it helpful to use [`watchexec`](https://github.com/mattgreen/watchexec):
+install it with `cargo install watchexec` and run it with `watchexec --restart "cargo run"`.
+It should automatically rebuild and start the server whenever you change a file in the directory.
 
 
 ---
