@@ -7,12 +7,6 @@ pub struct User {
     name: String,
 }
 
-impl User {
-    pub fn name(&self) -> &str {
-        &self.name
-    }
-}
-
 impl<'a, 'r> FromRequest<'a, 'r> for User {
     type Error = ();
 
