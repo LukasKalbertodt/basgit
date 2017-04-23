@@ -20,7 +20,7 @@ fn main() {
 /// Compiles `.less` files with `lessc` which is assumed to be installed on
 /// the local machine.
 fn compile_less(manifest_dir: &Path) {
-    // Build paths
+    // In and out paths
     let less_dir = manifest_dir.join(
         env::var("LESS_DIR").unwrap_or("less/".into())
     );
@@ -37,12 +37,14 @@ fn compile_less(manifest_dir: &Path) {
     let minify_flag = ["--clean-css"];
     let flags = if is_debug { &[] as &[_] } else { &minify_flag };
 
+    // Execute the compiler
     let res = Command::new("lessc")
         .args(flags)
         .arg(&less_dir.join("main.less"))
         .arg(&out_dir.join("main.css"))
         .output();
 
+    // Check if anything went wrong
     match res {
         Err(e) => {
             errln!("An IO error occured while running the less-compiler:");
