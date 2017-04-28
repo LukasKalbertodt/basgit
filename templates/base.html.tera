@@ -5,12 +5,27 @@
     <title>{% block title %}{% endblock title %}</title>
 </head>
 <body>
-    <div id="header">{% include "header" %}</div>
-    <div id="content">{% block content %}{% endblock content %}</div>
-    <div id="footer">
-        {% block footer %}
-        &copy; Copyright 2017 by BasGit Developers.
-        {% endblock footer %}
+<div id="tl-container">
+    <div id="tl-header">
+        <div class="tl-centered">
+            {% include "header" %}
+        </div>
     </div>
+    <div id="tl-content">
+        {% block raw_content %}
+        <div class="tl-centered">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        {% endblock raw_content %}
+    </div>
+    <div id="tl-footer">
+        <div class="tl-centered">
+            {% block footer %}
+            &copy; Copyright 2017 by BasGit Developers.
+            {% endblock footer %}
+        </div>
+    </div>
+</div>
 </body>
 </html>

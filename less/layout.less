@@ -1,0 +1,27 @@
+// This file defines the layout of several important elements. It's just
+// concerned with layout!
+// ---------------------------------------------
+
+
+@site-width: 1000px;
+
+
+// These definitions affect the *top level* elements, denoted by `tl-`. They
+// are organized in a simple grid with one column and three rows.
+#tl-container {
+    display: grid;
+    grid-template-rows: 55px 1fr 100px;
+    grid-template-columns: 1fr;
+}
+#tl-header {
+    padding: 5px 0px;
+}
+#tl-content {}
+#tl-footer {}
+
+.tl-centered {
+    width: @site-width;
+    margin: 0px auto;
+    height: 100%;
+    overflow: hidden;
+}
