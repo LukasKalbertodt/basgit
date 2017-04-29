@@ -16,11 +16,13 @@
             <li><a href="/">Nonumy</a></li>
         </ul>
     </div>
-    <div id="header-user">
-        {% if user %}
-            Hi, {{ user.name }}! <a href="/logout">Logout</a>
-        {% else %}
-            <a href="/login">Login</a>
-        {% endif %}
+    <div id="header-user-container">
+        <div id="header-user">
+            {% if user %}
+                Hi, {{ user.name }}! <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+            {% endif %}
+        </div>
     </div>
 </div>
