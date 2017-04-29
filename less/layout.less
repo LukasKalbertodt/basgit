@@ -4,13 +4,14 @@
 
 
 @site-width: 1000px;
+@footer-height: 28px;
 
 
 // These definitions affect the *top level* elements, denoted by `tl-`. They
 // are organized in a simple grid with one column and three rows.
 #tl-container {
     display: grid;
-    grid-template-rows: 55px 1fr 100px;
+    grid-template-rows: 55px 1fr @footer-height;
     grid-template-columns: 1fr;
 }
 #tl-header {

@@ -21,9 +21,7 @@
     </div>
     <div id="tl-footer">
         <div class="tl-centered">
-            {% block footer %}
-            &copy; Copyright 2017 by BasGit Developers.
-            {% endblock footer %}
+            {% include "footer" %}
         </div>
     </div>
 </div>
