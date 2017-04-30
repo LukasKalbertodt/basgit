@@ -41,7 +41,7 @@ fn validate_data(
     // by a real login system.
     let user_name = form_data.into_inner().user_name;
     if user_name != "invalid" {
-        cookies.add(Cookie::new("user_name", user_name));
+        cookies.add(Cookie::new("username", user_name));
         Ok(Redirect::to("/"))
     } else {
         Err(Flash::error(Redirect::to("/login"), "Invalid login data"))
@@ -53,7 +53,7 @@ fn validate_data(
 fn logout(cookies: &Cookies, user: Option<User>) -> Redirect {
     if let Some(_) = user {
         // TODO: replace by proper login system
-        cookies.remove("user_name");
+        cookies.remove("username");
     }
     Redirect::to("/")
 }

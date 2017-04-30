@@ -2,7 +2,7 @@
 {% block title %}BasGit{% endblock title %}
 
 {% block content %}
-<h1>Welcome back</h1>
+<h1>Welcome back, {{ user.username }}!</h1>
 <p class="important">
     Here, you will see all your activity! :3
 </p>
