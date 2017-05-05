@@ -40,6 +40,13 @@ install it with `cargo install watchexec` and run it with `watchexec --restart "
 It should automatically rebuild and start the server whenever you change a file in the directory.
 
 
+## Contributing
+
+Right now, this project is developed by me as part of a course at my university.
+As such, I'm not allowed to merge other people's code (yet).
+This limitation is lifted sometime in July this year.
+If you are interested in this project, please wait until then before working on the code.
+
 ---
 
 ## License
