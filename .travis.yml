@@ -17,9 +17,9 @@ before_script:
 env:
   - RUSTFLAGS="--deny warnings"
 
-script:
-  - ci/check-basic-style.sh
-  - cargo build --verbose
-  - cargo test --verbose
+script: |
+  ci/check-basic-style.sh && \
+  cargo build --verbose && \
+  cargo test --verbose
 
 cache: cargo
