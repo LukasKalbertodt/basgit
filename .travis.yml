@@ -2,8 +2,16 @@ language: rust
 rust:
   - nightly
 
+services:
+  - postgresql
+
 before_install:
   - npm install -g less
+  - cargo install diesel_cli
+
+before_script:
+  - cp .env.travis .env
+  - psql -c 'create database basgit_travis;' -U postgres
 
 env:
   - RUSTFLAGS="--deny warnings"
