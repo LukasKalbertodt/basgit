@@ -11,6 +11,7 @@
 COLS=100
 FOLDER="."
 FILES='.+\.\(rs\|toml\|tera\|hbs\|less\)'
+FILES_LONG_LINES='.+\.\(rs\|toml\|less\)'
 
 
 # Exit script on the first error
@@ -103,7 +104,7 @@ fi
 echo ""
 echo "=== Searching for files with too long lines... ========================"
 FOUND=0
-for f in $(find $FOLDER -regex $FILES); do
+for f in $(find $FOLDER -regex $FILES_LONG_LINES); do
     if [ $(wc -L $f | cut -d" " -f1) -gt $COLS ] ; then
         echo "! Line with more than $COLS chars in $f"
         FOUND=1
