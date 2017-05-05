@@ -40,9 +40,8 @@ $ cargo run
 If compiling fails, you probably need to update your compiler version with `rustup update nightly`.
 
 For any kind of production use, you should compile the application with `cargo run --release` and read [the Rocket guide on this topic](https://rocket.rs/guide/overview/#launching).
-For development, I found it helpful to use [`watchexec`](https://github.com/mattgreen/watchexec):
-install it with `cargo install watchexec` and run it with `watchexec --restart "cargo run"`.
-It should automatically rebuild and start the server whenever you change a file in the directory.
+For development, there is a helpful script `util/watch.sh` which automatically recompiles everything and restarts the server whenever files were changed.
+In order to use that script, you need to install `watchexec`: `cargo install watchexec`.
 
 
 ## Contributing
