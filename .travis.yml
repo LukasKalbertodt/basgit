@@ -7,11 +7,11 @@ services:
 
 before_install:
   - npm install -g less
-  - cargo install diesel_cli
+  - cargo install -f diesel_cli
 
 before_script:
   - cp .env.travis .env
-  - psql -c 'create database basgit_travis;' -U postgres
+  - diesel setup
 
 env:
   - RUSTFLAGS="--deny warnings"
