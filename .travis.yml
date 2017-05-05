@@ -7,7 +7,8 @@ services:
 
 before_install:
   - npm install -g less
-  - cargo install -f diesel_cli
+  # install diesel_cli if it's not cached
+  - hash diesel 2>/dev/null || cargo install -f diesel_cli
 
 before_script:
   - cp .env.travis .env
