@@ -1,0 +1,23 @@
+
+#tl-footer .tl-centered {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #ccc;
+    display: grid;
+    grid-template-columns: 1fr @footer-height 1fr;
+    align-items: middle;
+
+    #footer-left {
+        justify-self: left;
+    }
+
+    #footer-center {
+        background-color: #77ff77;
+        border-radius: @footer-height / 2;
+        border: 1px solid #33cc33;
+    }
+
+    #footer-right {
+        justify-self: right;
+    }
+}

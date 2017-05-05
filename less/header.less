@@ -1,0 +1,115 @@
+// Style definitions for all elements in the site's header.
+
+// Width of the search field (& when in focus)
+@search-width: 200px;
+@search-expanded-width: 400px;
+
+@header-content-height: 45px;
+
+
+#tl-header {
+    background-color: @c-header-background;
+    box-shadow: inset 0px -25px 20px -15px @c-header-shadow;
+}
+
+#header-container {
+    height: @header-content-height;
+    display: grid;
+    grid-template-columns: @header-content-height 1fr auto;
+    grid-template-rows: 1fr;
+    grid-column-gap: 15px;
+}
+
+#header-logo {
+    img {
+        width: @header-content-height;
+        height: @header-content-height;
+        opacity: 0.85;
+
+        &:hover {
+            opacity: 1.0;
+        }
+    }
+}
+
+#header-search-nav {
+    height: @header-content-height;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 15px;
+}
+
+#header-search {
+    height: @header-content-height;
+    padding: 4px 0px;
+    box-sizing: border-box;
+
+    form {
+        height: 100%;
+
+        input {
+            box-sizing: border-box;
+            width: @search-width;
+            height: 100%;
+            padding: 2px 7px;
+
+            border: 2px solid @c-header-search-border;
+            border-radius: 3px;
+            background-color: @c-header-search-bg;
+            color: white;
+
+            transition: width 250ms;
+
+            &:focus {
+                width: @search-expanded-width;
+                background-color: @c-header-search-bg-active;
+            }
+        }
+
+    }
+}
+
+#header-navbar {
+    padding: 0px;
+    margin: 0px;
+
+    list-style: none;
+    align-self: center;
+
+    li {
+        display: inline;
+        margin: 0px 6px;
+        font-weight: 600;
+
+        a {
+            color: @c-header-navbar-text;
+            text-decoration: none;
+
+            &:hover {
+                color: @c-header-navbar-text-hover;
+                text-shadow: -1px 1px 0px black;
+            }
+        }
+    }
+}
+
+
+#header-user-container {
+    height: @header-content-height;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 1fr;
+
+    #header-user {
+        align-self: center;
+
+        a {
+            color: white;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+}

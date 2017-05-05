@@ -1,18 +1,24 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
+#[macro_use] extern crate diesel;
+#[macro_use] extern crate diesel_codegen;
+extern crate dotenv;
 extern crate rocket;
 extern crate rocket_contrib;
 #[macro_use] extern crate serde_derive;
 
-mod context;
-mod index;
-mod login;
-mod user;
+
+pub mod context;
+pub mod db;
+pub mod index;
+pub mod login;
+pub mod user;
 
 
 fn main() {
     rocket::ignite()
+        .manage(db::Db::open_connection())
         .mount("/", routes![
             // Routes for serving the index page
             index::with_login,

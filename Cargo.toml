@@ -3,9 +3,13 @@ name = "basgit"
 version = "0.1.0"
 authors = ["Lukas Kalbertodt <lukas.kalbertodt@gmail.com>"]
 
-build = "build.rs"
+[profile.dev]
+codegen-units = 4
 
 [dependencies]
+diesel = { version = "0.11.0", features = ["postgres"] }
+diesel_codegen = { version = "0.11.0", features = ["postgres"] }
+dotenv = "0.8.0"
 rocket = "0.2.6"
 rocket_codegen = "0.2.6"
 serde = "0.9"

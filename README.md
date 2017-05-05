@@ -24,6 +24,11 @@ $ sudo apt install npm     # in case you don't have npm already
 $ npm install -g less
 ```
 
+Finally, we need to setup the database.
+For that, you need to install a PostgreSQL server (`sudo apt install postgresql` on Ubuntu) and the Diesel CLI tools (`cargo install diesel_cli`).
+Once these are installed, you have to execute `diesel setup` in this project's directory.
+
+
 ### Compile and run the program
 
 Now, you can simply run the application with:
@@ -35,10 +40,16 @@ $ cargo run
 If compiling fails, you probably need to update your compiler version with `rustup update nightly`.
 
 For any kind of production use, you should compile the application with `cargo run --release` and read [the Rocket guide on this topic](https://rocket.rs/guide/overview/#launching).
-For development, I found it helpful to use [`watchexec`](https://github.com/mattgreen/watchexec):
-install it with `cargo install watchexec` and run it with `watchexec --restart "cargo run"`.
-It should automatically rebuild and start the server whenever you change a file in the directory.
+For development, there is a helpful script `util/watch.sh` which automatically recompiles everything and restarts the server whenever files were changed.
+In order to use that script, you need to install `watchexec`: `cargo install watchexec`.
 
+
+## Contributing
+
+Right now, this project is developed by me as part of a course at my university.
+As such, I'm not allowed to merge other people's code (yet).
+This limitation is lifted sometime in July this year.
+If you are interested in this project, please wait until then before working on the code.
 
 ---
 

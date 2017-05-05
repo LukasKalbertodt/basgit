@@ -1,6 +1,28 @@
-This is a header!
-{% if user %}
-    Hi, {{ user.name }}! <a href="/logout">Logout</a>
-{% else %}
-    <a href="/login">Login</a>
-{% endif %}
+<div id="header-container">
+    <div id="header-logo">
+        <a href="/">
+            <img src="static/logo-tmp.svg"/>
+        </a>
+    </div>
+    <div id="header-search-nav">
+        <div id="header-search">
+            <form method="post" target="/search">
+                <input type="text" placeholder="Search ..." />
+            </form>
+        </div>
+        <ul id="header-navbar">
+            <li><a href="/">Dolores</a></li>
+            <li><a href="/">Voluptua</a></li>
+            <li><a href="/">Nonumy</a></li>
+        </ul>
+    </div>
+    <div id="header-user-container">
+        <div id="header-user">
+            {% if user %}
+                Hi, {{ user.name }}! <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
