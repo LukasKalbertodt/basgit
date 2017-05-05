@@ -24,6 +24,11 @@ $ sudo apt install npm     # in case you don't have npm already
 $ npm install -g less
 ```
 
+Finally, we need to setup the database.
+For that, you need to install a PostgreSQL server (`sudo apt install postgresql` on Ubuntu) and the Diesel CLI tools (`cargo install diesel_cli`).
+Once these are installed, you have to execute `diesel setup` in this project's directory.
+
+
 ### Compile and run the program
 
 Now, you can simply run the application with:
