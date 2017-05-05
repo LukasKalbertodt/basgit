@@ -9,6 +9,7 @@ pub struct User {
     id: i64,
     username: String,
     name: Option<String>,
+    bio: Option<String>,
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for User {
