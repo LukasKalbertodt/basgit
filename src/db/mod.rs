@@ -1,34 +1,31 @@
-use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use dotenv::dotenv;
-use std::env;
+use r2d2::{self, Pool};
+use r2d2_diesel::ConnectionManager;
 
-use std::sync::Mutex;
+use std::env;
 
 pub mod schema;
 
+
 pub struct Db {
-    // TODO: Wrapping the connection into a mutex is probably a pretty bad
-    // idea regarding performance. Also, [here][1] it says that connections
-    // should only be used on a single thread anyway. So I guess this should
-    // be replaced by a mechanism which lazily opens a connection for every
-    // thread. Something like that.
-    //
-    // [1]: https://github.com/diesel-rs/diesel/issues/190
-    pub conn: Mutex<PgConnection>,
+    pub pool: Pool<ConnectionManager<PgConnection>>,
 }
 
 impl Db {
     pub fn open_connection() -> Self {
+        // Load DATABASE_URL from `.env` if present.
         dotenv().ok();
 
+        // Create a database connection pool.
+        // TODO: Maybe tweak r2d2 config if necessary
+        // TODO: Maybe install another error handler for the pool
+        let config = r2d2::Config::default();
         let database_url = env::var("DATABASE_URL")
             .expect("DATABASE_URL must be set");
-        let conn = PgConnection::establish(&database_url)
-            .expect(&format!("Error connecting to {}", database_url));
+        let manager = ConnectionManager::new(database_url);
+        let pool = Pool::new(config, manager).expect("Failed to create pool.");
 
-        Self {
-            conn: Mutex::new(conn),
-        }
+        Self { pool }
     }
 }

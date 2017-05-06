@@ -26,7 +26,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
             .and_then(|cookie| {
                 let db = <State<Db> as FromRequest>::from_request(req)
                     .expect("cannot retrieve DB connection from request");
-                let conn = db.conn.lock().unwrap();
+                let conn = db.pool.get().unwrap();
 
                 // users.by_username();
 
