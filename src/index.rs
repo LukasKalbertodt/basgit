@@ -1,6 +1,6 @@
 use rocket_contrib::Template;
 
-use user::User;
+use model::User;
 
 use context::Context;
 

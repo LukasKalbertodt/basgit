@@ -4,7 +4,7 @@ use rocket::request::{Form, FlashMessage};
 use rocket::http::Cookies;
 use rocket::State;
 
-use user::User;
+use model::User;
 use context::Context;
 use db::Db;
 

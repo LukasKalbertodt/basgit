@@ -1,6 +1,6 @@
 use rocket::request::FlashMessage;
 
-use user::User;
+use model::User;
 
 /// Serves as the main template context.
 #[derive(Clone, Eq, PartialEq, Serialize)]

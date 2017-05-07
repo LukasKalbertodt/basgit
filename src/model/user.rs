@@ -6,7 +6,7 @@ use rand::{self, Rng};
 use rocket::{Outcome, State};
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request};
-use model;
+use model::{self, UserEmail};
 
 
 use db::Db;
@@ -175,12 +175,4 @@ impl LoginError {
                 Please choose another authentication method.",
         }
     }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Identifiable, Queryable, Associations)]
-#[primary_key(email)]
-#[belongs_to(User)]
-pub struct UserEmail {
-    email: String,
-    user_id: i64,
 }

@@ -2,7 +2,7 @@ use chrono::DateTime;
 use chrono::offset::utc::UTC;
 
 use db::schema::sessions;
-use user::User;
+use model::User;
 
 #[derive(Debug, Clone, Eq, PartialEq, Insertable)]
 #[table_name = "sessions"]

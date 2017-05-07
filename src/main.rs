@@ -20,7 +20,6 @@ pub mod db;
 pub mod index;
 pub mod login;
 pub mod model;
-pub mod user;
 
 
 fn main() {
