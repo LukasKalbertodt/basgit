@@ -4,6 +4,9 @@ create table users (
     username sl_string not null,
     name sl_string,
 
+    -- bcrypt hash string
+    password char(60),
+
     bio ml_string
 );
 
@@ -12,7 +15,7 @@ create unique index users_unique_lower_username_idx on users (lower(username));
 
 create table user_emails (
     email text primary key check (octet_length(email) <= 254),
-    user_id bigint references users(id) on delete cascade on update cascade
+    user_id bigint not null references users(id) on delete cascade on update cascade
 
     -- Valid emails can't be longer than 254 bytes. We can at least restrict
     -- the number of characters here.

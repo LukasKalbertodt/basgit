@@ -1,6 +1,6 @@
 use diesel::pg::PgConnection;
 use dotenv::dotenv;
-use r2d2::{self, Pool};
+use r2d2::{self, Pool, PooledConnection};
 use r2d2_diesel::ConnectionManager;
 
 use std::env;
@@ -27,5 +27,10 @@ impl Db {
         let pool = Pool::new(config, manager).expect("Failed to create pool.");
 
         Self { pool }
+    }
+
+    /// Returns a DB connection.
+    pub fn conn(&self) -> PooledConnection<ConnectionManager<PgConnection>> {
+        self.pool.get().unwrap()
     }
 }

@@ -1,11 +1,12 @@
 use rocket_contrib::Template;
 use rocket::response::{Flash, Redirect};
 use rocket::request::{Form, FlashMessage};
-use rocket::http::{Cookie, Cookies};
+use rocket::http::Cookies;
+use rocket::State;
 
 use user::User;
-
 use context::Context;
+use db::Db;
 
 
 /// The main login page showing a login form.
@@ -32,19 +33,21 @@ fn with_login(_user: User) -> Redirect {
 }
 
 /// Handles post data from a login action.
-#[post("/login", data = "<form_data>")]
+#[post("/login", data = "<form>")]
 fn validate_data(
     cookies: &Cookies,
-    form_data: Form<LoginForm>
+    form: Form<LoginForm>,
+    db: State<Db>,
 ) -> Result<Redirect, Flash<Redirect>> {
-    // TODO: Again, this is obviously just for testing and should be replaced
-    // by a real login system.
-    let user_name = form_data.into_inner().user_name;
-    if user_name != "invalid" {
-        cookies.add(Cookie::new("username", user_name));
-        Ok(Redirect::to("/"))
-    } else {
-        Err(Flash::error(Redirect::to("/login"), "Invalid login data"))
+    let form = form.into_inner();
+    match User::login(&form.id, &form.password, &db) {
+        Ok(user) => {
+            user.set_session(&cookies);
+            Ok(Redirect::to("/"))
+        }
+        Err(e) => {
+            Err(Flash::error(Redirect::to("/login"), e.description()))
+        }
     }
 }
 
@@ -60,5 +63,6 @@ fn logout(cookies: &Cookies, user: Option<User>) -> Redirect {
 
 #[derive(FromForm)]
 struct LoginForm {
-    user_name: String,
+    id: String,
+    password: String,
 }
