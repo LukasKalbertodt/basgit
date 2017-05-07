@@ -1,16 +1,24 @@
+use base64;
 use diesel::prelude::*;
+use diesel;
 use pwhash::bcrypt;
+use rand::{self, Rng};
 use rocket::{Outcome, State};
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request};
+use model;
+
 
 use db::Db;
 
-use db::schema::{users, user_emails};
+use db::schema::{users, user_emails, sessions};
 
+
+const SESSION_COOKIE_NAME: &str = "session";
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Identifiable, Queryable, Associations)]
 #[has_many(user_emails)]
+#[has_many(sessions)]
 pub struct User {
     id: i64,
 
@@ -68,9 +76,52 @@ impl User {
         }
     }
 
-    pub fn set_session(&self, cookies: &Cookies) {
-        // TODO: this is obviously stupid
-        cookies.add(Cookie::new("username", self.username.clone()));
+    pub fn create_session(&self, cookies: &Cookies, db: &Db) {
+        // Generate a random session id. 128 bit seems to be enough entropy
+        // according to those sources:
+        //
+        // - https://security.stackexchange.com/a/24852/147555
+        // - https://security.stackexchange.com/a/138396/147555
+        let mut id = [0u8; 16];
+        let mut rng = rand::os::OsRng::new()
+            .expect("could not use system rng");
+        rng.fill_bytes(&mut id);
+
+        // Insert session id linked with the user id into the database.
+        let new_session = model::NewSession {
+            id: id.to_vec(),
+            user_id: self.id,
+        };
+        let conn = db.conn();
+        diesel::insert(&new_session)
+            .into(sessions::table)
+            .execute(&*conn)
+            .unwrap();
+
+        // Encode session id as base64 and set it as cookie.
+        let encoded = base64::encode(&id);
+        cookies.add(Cookie::new("session", encoded));
+    }
+
+    /// Ends a login session, removing the entry from the database and removing
+    /// the cookie.
+    ///
+    /// This function assumes the user was authenticated via session cookie.
+    pub fn end_session(&self, cookies: &Cookies, db: &Db) {
+        // Since we assume the user was authenticated via session id, we know
+        // the cookie jar contains such a cookie and the cookie is valid
+        // base64.
+        let session_id = base64::decode(
+            cookies.find(SESSION_COOKIE_NAME).unwrap().value()
+        ).unwrap();
+
+        // Remove from database.
+        diesel::delete(sessions::table.find(session_id))
+            .execute(&*db.conn())
+            .expect("failed to delete session entry from database");
+
+        // Remove from cookie jar.
+        cookies.remove(SESSION_COOKIE_NAME);
     }
 }
 
@@ -78,23 +129,27 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
     type Error = ();
 
     fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-        // TODO: this implementation is obviously ridiculous and intended for
-        // testing only!
+        // This method tries to authenticate a user from a session id.
 
-        req.cookies().find("username")
-            .and_then(|cookie| {
+        req.cookies().find(SESSION_COOKIE_NAME)
+            // The cookie's value is encoded in base64, but we need the raw
+            // bytes.
+            .and_then(|cookie| base64::decode(cookie.value()).ok())
+            .and_then(|session_id| {
+                // Obtain a DB pool.
                 let db = <State<Db> as FromRequest>::from_request(req)
                     .expect("cannot retrieve DB connection from request");
-                let conn = db.pool.get().unwrap();
 
-                users::table
-                    .filter(users::username.eq(cookie.value()))
-                    .limit(1)
-                    .first::<User>(&*conn)
+                // Try to find session id and the associated user.
+                sessions::table
+                    .find(session_id)
+                    .inner_join(users::table)
+                    .first::<(model::Session, Self)>(&*db.conn())
                     .optional()
-                    .expect("error loading users")
+                    .unwrap()
             })
-            .map(|user| Outcome::Success(user))
+            // TODO: maybe check age of session
+            .map(|(_, user)| Outcome::Success(user))
             .unwrap_or(Outcome::Forward(()))
     }
 }

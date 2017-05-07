@@ -42,7 +42,7 @@ fn validate_data(
     let form = form.into_inner();
     match User::login(&form.id, &form.password, &db) {
         Ok(user) => {
-            user.set_session(&cookies);
+            user.create_session(&cookies, &db);
             Ok(Redirect::to("/"))
         }
         Err(e) => {
@@ -53,10 +53,9 @@ fn validate_data(
 
 /// Handler to logout the user. If there is no login present, nothing happens.
 #[get("/logout")]
-fn logout(cookies: &Cookies, user: Option<User>) -> Redirect {
-    if let Some(_) = user {
-        // TODO: replace by proper login system
-        cookies.remove("username");
+fn logout(cookies: &Cookies, user: Option<User>, db: State<Db>) -> Redirect {
+    if let Some(user) = user {
+        user.end_session(&cookies, &db);
     }
     Redirect::to("/")
 }

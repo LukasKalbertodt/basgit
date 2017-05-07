@@ -1,12 +1,15 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
+extern crate base64;
+extern crate chrono;
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_codegen;
 extern crate dotenv;
 extern crate pwhash;
 extern crate r2d2;
 extern crate r2d2_diesel;
+extern crate rand;
 extern crate rocket;
 extern crate rocket_contrib;
 #[macro_use] extern crate serde_derive;
@@ -16,6 +19,7 @@ pub mod context;
 pub mod db;
 pub mod index;
 pub mod login;
+pub mod model;
 pub mod user;
 
 

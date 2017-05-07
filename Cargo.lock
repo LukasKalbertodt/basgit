@@ -2,12 +2,15 @@
 name = "basgit"
 version = "0.1.0"
 dependencies = [
+ "base64 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel_codegen 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "pwhash 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2-diesel 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_codegen 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -65,6 +68,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "base64"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "byteorder 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "byteorder"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -107,6 +118,7 @@ version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "byteorder 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "pq-sys 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -728,6 +740,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum antidote 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "34fde25430d87a9388dadbe6e34d7f72a462c8b43ac8d309b42b0a8505d7e2a5"
 "checksum backtrace 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "f551bc2ddd53aea015d453ef0b635af89444afa5ed2405dd0b2062ad5d600d80"
 "checksum backtrace-sys 0.1.10 (registry+https://github.com/rust-lang/crates.io-index)" = "d192fd129132fbc97497c1f2ec2c2c5174e376b95f535199ef4fe0a293d33842"
+"checksum base64 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "30e93c03064e7590d0466209155251b90c22e37fab1daf2771582598b5827557"
 "checksum byteorder 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c40977b0ee6b9885c9013cd41d9feffdd22deb3bb4dc3a71d901cc7a77de18c8"
 "checksum cfg-if 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "de1e760d7b6535af4241fca8bd8adf68e2e7edacc6b29f5d399050c5e48cf88c"
 "checksum chrono 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d9123be86fd2a8f627836c235ecdf331fdd067ecf7ac05aa1a68fbcf2429f056"
