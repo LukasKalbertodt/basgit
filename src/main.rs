@@ -17,14 +17,16 @@ extern crate rocket_contrib;
 
 pub mod context;
 pub mod db;
-pub mod index;
-pub mod login;
 pub mod model;
+pub mod routes;
 
 
 fn main() {
+    use routes::{self, index, login};
+    use db::Db;
+
     rocket::ignite()
-        .manage(db::Db::open_connection())
+        .manage(Db::open_connection())
         .mount("/", routes![
             // Routes for serving the index page
             index::with_login,
@@ -37,19 +39,7 @@ fn main() {
             login::logout,
 
             // Serving static files in `static/`
-            static_files,
+            routes::static_files,
         ])
         .launch();
-}
-
-
-
-use rocket::response::NamedFile;
-
-/// Route to serve static file requests from the `static/` directory.
-#[get("/static/<file>")]
-fn static_files(file: &str) -> Option<NamedFile> {
-    use std::path::Path;
-
-    NamedFile::open(Path::new("static/").join(file)).ok()
 }
