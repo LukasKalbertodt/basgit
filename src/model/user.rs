@@ -31,6 +31,8 @@ pub struct User {
     bio: Option<String>,
 }
 
+/// An authorized user with an active session. This type doesn't restrict
+/// access to any properties, as the user is logged in.
 pub struct AuthUser {
     data: User,
     session: Option<Session>,
@@ -191,5 +193,36 @@ impl LoginError {
             LoginError::NoPasswordSet => "This user cannot be authenticated via password. \
                 Please choose another authentication method.",
         }
+    }
+}
+
+/// A public view of a user. Exposes only properties that are supposed to
+/// be seen by everyone.
+pub struct PubUser {
+    data: User,
+}
+
+impl PubUser {
+    pub fn from_username(username: &str, db: &Db) -> Option<Self> {
+        // Find the user with the given username.
+        users::table
+            .filter(users::username.eq(username))
+            .limit(1)
+            .first(&*db.conn())
+            .optional()
+            .unwrap()
+            .map(|user| PubUser { data: user })
+    }
+
+    pub fn username(&self) -> &str {
+        &self.data.username
+    }
+
+    pub fn name(&self) -> Option<&str> {
+        self.data.name.as_ref().map(AsRef::as_ref)
+    }
+
+    pub fn bio(&self) -> Option<&str> {
+        self.data.bio.as_ref().map(AsRef::as_ref)
     }
 }
