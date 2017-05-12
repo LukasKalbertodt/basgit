@@ -1,6 +1,6 @@
 use rocket_contrib::Template;
 
-use model::User;
+use model::AuthUser;
 
 use context::Context;
 
@@ -10,9 +10,9 @@ use context::Context;
 /// The plan is to show recent activity in watched baskets as well as some
 /// quick action buttons, such as "create new basket".
 #[get("/")]
-fn with_login(user: User) -> Template {
+fn with_login(user: AuthUser) -> Template {
     let context = Context {
-        user: Some(user),
+        user: Some(user.into_data()),
         .. Context::empty()
     };
     Template::render("index/with_login", &context)

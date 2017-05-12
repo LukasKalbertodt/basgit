@@ -6,7 +6,7 @@ use rand::{self, Rng};
 use rocket::{Outcome, State};
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request};
-use model::{self, UserEmail};
+use model::{self, UserEmail, Session};
 
 
 use db::Db;
@@ -31,7 +31,12 @@ pub struct User {
     bio: Option<String>,
 }
 
-impl User {
+pub struct AuthUser {
+    data: User,
+    session: Option<Session>,
+}
+
+impl AuthUser {
     /// Tries to authenticate a user with a given `id` (username or email) and
     /// a `password`. Returns a `User` object on success and an error
     /// otherwise.
@@ -42,7 +47,7 @@ impl User {
 
         // Usernames can't contain '@', so we can easily see whether or not
         // the `id` is an email address or a username.
-        let user: Option<Self> = if id.contains('@') {
+        let user: Option<User> = if id.contains('@') {
             // Find the email in the database and return the user associated
             // with it.
             user_emails::table.find(id)
@@ -67,7 +72,10 @@ impl User {
                 if user.password.is_none() {
                     Err(LoginError::NoPasswordSet)
                 } else if bcrypt::verify(password, user.password.as_ref().unwrap()) {
-                    Ok(user)
+                    Ok(AuthUser {
+                        data: user,
+                        session: None,
+                    })
                 } else {
                     Err(LoginError::PasswordIncorrect)
                 }
@@ -76,7 +84,11 @@ impl User {
         }
     }
 
-    pub fn create_session(&self, cookies: &Cookies, db: &Db) {
+    pub fn into_data(self) -> User {
+        self.data
+    }
+
+    pub fn create_session(&mut self, cookies: &Cookies, db: &Db) {
         // Generate a random session id. 128 bit seems to be enough entropy
         // according to those sources:
         //
@@ -90,13 +102,13 @@ impl User {
         // Insert session id linked with the user id into the database.
         let new_session = model::NewSession {
             id: id.to_vec(),
-            user_id: self.id,
+            user_id: self.data.id,
         };
-        let conn = db.conn();
-        diesel::insert(&new_session)
+        let inserted_session = diesel::insert(&new_session)
             .into(sessions::table)
-            .execute(&*conn)
+            .get_result::<Session>(&*db.conn())
             .unwrap();
+        self.session = Some(inserted_session);
 
         // Encode session id as base64 and set it as cookie.
         let encoded = base64::encode(&id);
@@ -125,7 +137,7 @@ impl User {
     }
 }
 
-impl<'a, 'r> FromRequest<'a, 'r> for User {
+impl<'a, 'r> FromRequest<'a, 'r> for AuthUser {
     type Error = ();
 
     fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
@@ -144,12 +156,17 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
                 sessions::table
                     .find(session_id)
                     .inner_join(users::table)
-                    .first::<(model::Session, Self)>(&*db.conn())
+                    .first::<(Session, User)>(&*db.conn())
                     .optional()
                     .unwrap()
             })
             // TODO: maybe check age of session
-            .map(|(_, user)| Outcome::Success(user))
+            .map(|(session, user)| {
+                Outcome::Success(AuthUser {
+                    data:user,
+                    session: Some(session),
+                })
+            })
             .unwrap_or(Outcome::Forward(()))
     }
 }

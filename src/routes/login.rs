@@ -4,7 +4,7 @@ use rocket::request::{Form, FlashMessage};
 use rocket::http::Cookies;
 use rocket::State;
 
-use model::User;
+use model::AuthUser;
 use context::Context;
 use db::Db;
 
@@ -25,7 +25,7 @@ fn without_login(flash: Option<FlashMessage>) -> Template {
 /// Handler in case the `/login` page is access although the user is already
 /// logged in. We just redirect to the index page.
 #[get("/login")]
-fn with_login(_user: User) -> Redirect {
+fn with_login(_user: AuthUser) -> Redirect {
     // TODO: GitHub uses the 302 status code to redirect, but the `to()` method
     // uses the code 303. The rocket docs say 303 is preferred over 302, but
     // we should look for more information on this.
@@ -40,8 +40,8 @@ fn validate_data(
     db: State<Db>,
 ) -> Result<Redirect, Flash<Redirect>> {
     let form = form.into_inner();
-    match User::login(&form.id, &form.password, &db) {
-        Ok(user) => {
+    match AuthUser::login(&form.id, &form.password, &db) {
+        Ok(mut user) => {
             user.create_session(&cookies, &db);
             Ok(Redirect::to("/"))
         }
@@ -53,7 +53,7 @@ fn validate_data(
 
 /// Handler to logout the user. If there is no login present, nothing happens.
 #[get("/logout")]
-fn logout(cookies: &Cookies, user: Option<User>, db: State<Db>) -> Redirect {
+fn logout(cookies: &Cookies, user: Option<AuthUser>, db: State<Db>) -> Redirect {
     if let Some(user) = user {
         user.end_session(&cookies, &db);
     }
