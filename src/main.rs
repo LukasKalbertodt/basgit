@@ -1,11 +1,11 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
-extern crate base64;
 extern crate chrono;
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_codegen;
 extern crate dotenv;
+extern crate hex;
 extern crate pwhash;
 extern crate r2d2;
 extern crate r2d2_diesel;
@@ -19,7 +19,6 @@ pub mod context;
 pub mod db;
 pub mod model;
 pub mod routes;
-
 
 fn main() {
     use routes::{self, index, login, user};

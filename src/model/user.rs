@@ -1,16 +1,14 @@
-use base64;
 use diesel::prelude::*;
 use diesel;
+use hex;
 use pwhash::bcrypt;
 use rand::{self, Rng};
 use rocket::{Outcome, State};
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request};
+
 use model::{self, UserEmail, Session};
-
-
 use db::Db;
-
 use db::schema::{users, user_emails, sessions};
 
 
@@ -113,8 +111,8 @@ impl AuthUser {
             .unwrap();
         self.session = Some(inserted_session);
 
-        // Encode session id as base64 and set it as cookie.
-        let encoded = base64::encode(&id);
+        // Encode session id as hex and set it as cookie.
+        let encoded = hex::encode(&id);
         cookies.add(Cookie::new("session", encoded));
     }
 
@@ -124,9 +122,9 @@ impl AuthUser {
     /// This function assumes the user was authenticated via session cookie.
     pub fn end_session(&self, cookies: &Cookies, db: &Db) {
         // Since we assume the user was authenticated via session id, we know
-        // the cookie jar contains such a cookie and the cookie is valid
-        // base64.
-        let session_id = base64::decode(
+        // the cookie jar contains such a cookie and the cookie is a valid
+        // hex string.
+        let session_id = hex::decode(
             cookies.find(SESSION_COOKIE_NAME).unwrap().value()
         ).unwrap();
 
@@ -147,9 +145,9 @@ impl<'a, 'r> FromRequest<'a, 'r> for AuthUser {
         // This method tries to authenticate a user from a session id.
 
         req.cookies().find(SESSION_COOKIE_NAME)
-            // The cookie's value is encoded in base64, but we need the raw
-            // bytes.
-            .and_then(|cookie| base64::decode(cookie.value()).ok())
+            // The cookie's value is encoded as hex string, but we need the
+            // raw bytes.
+            .and_then(|cookie| hex::decode(cookie.value()).ok())
             .and_then(|session_id| {
                 // Obtain a DB pool.
                 let db = <State<Db> as FromRequest>::from_request(req)
