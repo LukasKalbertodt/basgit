@@ -1,0 +1,38 @@
+@info-col-width: 230px;
+@info-col-padding: 25px;
+
+#userpage {
+    margin-top: 10px;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: (@info-col-width + @info-col-padding) 1fr;
+    // grid-column-gap: 15px;
+}
+
+#userpage-info {
+    width: @info-col-width;
+
+    margin-right: @info-col-padding;
+
+    #userpage-info-avatar {
+        // @my-margin: 10px;
+
+        box-sizing: border-box;
+        width: @info-col-width;
+        // margin: @my-margin;
+        border-radius: 15px;
+        margin-bottom: 15px;
+    }
+
+    h1 {
+        font-weight: bold;
+        font-size: 26px;
+        margin: 0px 0px;
+    }
+    h2 {
+        font-size: 20px;
+        color: @c-text-gray;
+        margin-top: 0px;
+        margin-bottom: 10px;
+    }
+}

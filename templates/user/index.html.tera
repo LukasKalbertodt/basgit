@@ -2,5 +2,16 @@
 {% block title %}Login – BasGit{% endblock title %}
 
 {% block content %}
-    Userpage of {{ content.username }}.
+<div id="userpage">
+    <div id="userpage-info">
+        <img id="userpage-info-avatar" src="https://api.adorable.io/avatars/285/Lukas.png" />
+        {% if content.name %}
+            <h1>{{ content.name }}</h1>
+        {% endif %}
+        <h2>{{ content.username }}</h2>
+    </div>
+    <div>
+        moar content
+    </div>
+</div>
 {% endblock content %}
