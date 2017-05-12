@@ -10,9 +10,9 @@ use context::Context;
 /// The plan is to show recent activity in watched baskets as well as some
 /// quick action buttons, such as "create new basket".
 #[get("/")]
-fn with_login(user: AuthUser) -> Template {
+fn with_login(auth_user: AuthUser) -> Template {
     let context = Context {
-        user: Some(user.into_data()),
+        auth_user: Some(auth_user),
         .. Context::empty()
     };
     Template::render("index/with_login", &context)

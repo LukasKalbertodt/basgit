@@ -22,7 +22,7 @@ pub mod routes;
 
 
 fn main() {
-    use routes::{self, index, login};
+    use routes::{self, index, login, user};
     use db::Db;
 
     rocket::ignite()
@@ -37,6 +37,9 @@ fn main() {
             login::without_login,
             login::validate_data,
             login::logout,
+
+            // `/<user>` routes
+            user::index,
 
             // Serving static files in `static/`
             routes::static_files,

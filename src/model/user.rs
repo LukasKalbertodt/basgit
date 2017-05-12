@@ -33,6 +33,7 @@ pub struct User {
 
 /// An authorized user with an active session. This type doesn't restrict
 /// access to any properties, as the user is logged in.
+#[derive(Clone, Eq, PartialEq, Serialize)]
 pub struct AuthUser {
     data: User,
     session: Option<Session>,
@@ -198,6 +199,7 @@ impl LoginError {
 
 /// A public view of a user. Exposes only properties that are supposed to
 /// be seen by everyone.
+#[derive(Clone, Eq, PartialEq, Serialize)]
 pub struct PubUser {
     data: User,
 }

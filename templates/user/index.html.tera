@@ -1,0 +1,6 @@
+{% extends "base" %}
+{% block title %}Login – BasGit{% endblock title %}
+
+{% block content %}
+    Userpage of {{ content.username }}.
+{% endblock content %}

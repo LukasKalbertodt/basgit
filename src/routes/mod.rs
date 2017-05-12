@@ -3,6 +3,7 @@ use rocket::response::NamedFile;
 
 pub mod index;
 pub mod login;
+pub mod user;
 
 
 /// Route to serve static file requests from the `static/` directory.

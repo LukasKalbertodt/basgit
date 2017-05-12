@@ -2,11 +2,6 @@
 {% block title %}Login – BasGit{% endblock title %}
 
 {% block content %}
-    {% if flash %}
-        <div class="login-flash flash-{{ flash.name }}">
-            {{ flash.msg }}
-        </div>
-    {% endif %}
     <div class="login-box">
         <h2>Sign in to BasGit</h2>
         <hr />

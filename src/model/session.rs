@@ -11,7 +11,7 @@ pub struct NewSession {
     pub user_id: i64,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Queryable, Associations)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Queryable, Associations)]
 #[belongs_to(User)]
 pub struct Session {
     pub id: Vec<u8>,

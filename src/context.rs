@@ -1,12 +1,12 @@
 use rocket::request::FlashMessage;
 
-use model::User;
+use model::AuthUser;
 
 /// Serves as the main template context.
 #[derive(Clone, Eq, PartialEq, Serialize)]
 pub struct Context<T = ()> {
     /// Information about the user, if a login session exists.
-    pub user: Option<User>,
+    pub auth_user: Option<AuthUser>,
 
     /// Contents of the possibly set flash cookie.
     pub flash: Option<FlashContext>,
@@ -18,7 +18,7 @@ pub struct Context<T = ()> {
 impl<T> Default for Context<T> {
     fn default() -> Self {
         Context {
-            user: None,
+            auth_user: None,
             flash: None,
             content: None,
         }
@@ -30,7 +30,7 @@ impl Context<()> {
     /// this, we would need to write `Context::<()>::default()` everywhere.
     pub fn empty() -> Context<()> {
         Context {
-            user: None,
+            auth_user: None,
             flash: None,
             content: None,
         }
