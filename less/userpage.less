@@ -15,12 +15,9 @@
     margin-right: @info-col-padding;
 
     #userpage-info-avatar {
-        // @my-margin: 10px;
-
         box-sizing: border-box;
         width: @info-col-width;
-        // margin: @my-margin;
-        border-radius: 15px;
+        border-radius: 10px;
         margin-bottom: 15px;
     }
 
@@ -34,5 +31,41 @@
         color: @c-text-gray;
         margin-top: 0px;
         margin-bottom: 10px;
+    }
+}
+
+#userpage-tab-bar {
+    display: block;
+    height: 40px;
+    padding: 0px;
+    margin-bottom: 10px;
+
+    border-bottom: 1px solid @c-userpage-tabbar-sep;
+
+    li {
+        display: inline-block;
+        box-sizing: border-box;
+        height: 100%;
+
+        &.active {
+            border-bottom: 3px solid @c-userpage-tabbar-active;
+        }
+        &:hover {
+            border-bottom: 3px solid @c-userpage-tabbar-hover;
+        }
+        a {
+            display: block;
+            box-sizing: border-box;
+            height: 100%;
+            margin: 0px;
+            padding: 4px 20px;
+
+            text-decoration: none;
+            color: @c-text-dark-gray;
+
+            &:hover {
+                color: @c-text-normal;
+            }
+        }
     }
 }
