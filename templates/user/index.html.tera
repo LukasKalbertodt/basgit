@@ -4,7 +4,7 @@
 {% block content %}
 <div id="userpage">
     <div id="userpage-info">
-        <img id="userpage-info-avatar" src="https://api.adorable.io/avatars/285/Lukas.png" />
+        <img id="userpage-info-avatar" src="https://api.adorable.io/avatars/285/{{ content.username }}.png" />
         {% if content.name %}
             <h1>{{ content.name }}</h1>
         {% endif %}
