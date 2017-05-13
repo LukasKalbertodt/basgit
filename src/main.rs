@@ -1,4 +1,5 @@
 #![feature(plugin, custom_derive)]
+#![feature(ascii_ctype)]
 #![plugin(rocket_codegen)]
 
 extern crate chrono;
