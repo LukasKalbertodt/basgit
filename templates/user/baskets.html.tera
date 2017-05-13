@@ -6,8 +6,8 @@
 {% block content %}{{ super() }}{% endblock content %}
 
 {% block tab_content %}
-    {{ macros::tab_bar(active="Summary", url=content.username) }}
-    <div id="userpage-pinned-baskets">
-        <h2>Pinned Baskets</h2>
+    {{ macros::tab_bar(active="Baskets", url=content.username) }}
+    <div id="basket-list">
+        No baskets...
     </div>
 {% endblock tab_content %}

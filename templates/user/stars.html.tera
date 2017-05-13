@@ -1,0 +1,13 @@
+{% extends "user/base" %}
+
+{% import "user/tab_bar" as macros %}
+
+{% block title %}{{ content.username }}{% if content.name %} ({{ content.name }}){% endif %} – BasGit{% endblock title %}
+{% block content %}{{ super() }}{% endblock content %}
+
+{% block tab_content %}
+    {{ macros::tab_bar(active="Stars", url=content.username) }}
+    <div id="basket-list">
+        No stars...
+    </div>
+{% endblock tab_content %}

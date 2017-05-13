@@ -40,6 +40,7 @@ fn main() {
 
             // `/<user>` routes
             user::index,
+            user::tabs,
 
             // Serving static files in `static/`
             routes::static_files,
