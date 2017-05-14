@@ -18,6 +18,9 @@ const SESSION_COOKIE_NAME: &str = "session";
 ///
 /// - https://security.stackexchange.com/a/24852/147555
 /// - https://security.stackexchange.com/a/138396/147555
+///
+/// If you change this value, you also have to change the database scheme,
+/// since the length is checked there, too.
 const SESSION_ID_LEN: usize = 16;
 
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Identifiable, Queryable, Associations)]
@@ -63,7 +66,6 @@ impl AuthUser {
                 .optional()
                 .unwrap()
                 .map(|(_, user): (UserEmail, User)| user)
-
         } else if is_valid_username(id) {
             // Find the user with the given username.
             users::table
@@ -152,7 +154,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for AuthUser {
             // raw bytes.
             .and_then(|cookie| hex::decode(cookie.value()).ok())
             .and_then(|session_id| {
-                // If the length is Incorrect, we don't even need to ask the
+                // If the length is incorrect, we don't even need to ask the
                 // database.
                 if session_id.len() != SESSION_ID_LEN {
                     return None;

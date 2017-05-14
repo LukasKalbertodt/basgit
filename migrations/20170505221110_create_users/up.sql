@@ -1,7 +1,9 @@
 create table users (
-    id bigserial primary key,
+    id bigserial
+        primary key,
 
-    username sl_string not null,
+    username sl_string
+        not null,
     name sl_string,
 
     -- bcrypt hash string
@@ -18,8 +20,14 @@ create table user_emails (
     -- the number of characters here.
     --
     -- [1]: http://stackoverflow.com/a/574698/2408867
-    email text primary key check (octet_length(email) <= 254),
-    user_id bigint not null references users(id) on delete cascade on update cascade
+    email text
+        primary key
+        check (octet_length(email) <= 254),
+    user_id bigint
+        not null
+        references users(id)
+            on delete cascade
+            on update cascade
 );
 
 create index user_emails_user_id_idx on user_emails (user_id);

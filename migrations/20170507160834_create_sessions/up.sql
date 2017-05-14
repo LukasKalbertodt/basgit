@@ -1,7 +1,5 @@
 create table sessions (
     id bytea
-        not null
-        unique
         primary key
         check (octet_length(id) = 16),
 

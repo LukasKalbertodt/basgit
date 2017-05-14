@@ -2,7 +2,7 @@
 
 {% import "user/tab_bar" as macros %}
 
-{% block title %}{{ content.username }}{% if content.name %} ({{ content.name }}){% endif %} – BasGit{% endblock title %}
+{% block title %}{{ content.username }}{% if content.name %} ({{ content.name }}){% endif %} / Baskets – BasGit{% endblock title %}
 {% block content %}{{ super() }}{% endblock content %}
 
 {% block tab_content %}
