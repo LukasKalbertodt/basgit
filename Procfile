@@ -1,1 +1,1 @@
-web: bin/diesel migration run && ./target/release/basgit
+web: bin/diesel migration run && ROCKET_ENV=stage ROCKET_PORT=$PORT ./target/release/basgit
