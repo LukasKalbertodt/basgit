@@ -6,7 +6,7 @@ dependencies = [
  "diesel 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel_codegen 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "hex 0.3.0",
+ "hex 0.3.0 (git+https://github.com/LukasKalbertodt/rust-hex?branch=bump-030)",
  "pwhash 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2-diesel 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -179,6 +179,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "hex"
 version = "0.3.0"
+source = "git+https://github.com/LukasKalbertodt/rust-hex?branch=bump-030#905ff04b59a550d20e0b85969b6d86cba116edde"
 
 [[package]]
 name = "httparse"
@@ -759,6 +760,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum error-chain 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)" = "6930e04918388a9a2e41d518c25cf679ccafe26733fb4127dbf21993f2575d46"
 "checksum gcc 0.3.46 (registry+https://github.com/rust-lang/crates.io-index)" = "181e3cebba1d663bd92eb90e2da787e10597e027eb00de8d742b260a7850948f"
 "checksum glob 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)" = "8be18de09a56b60ed0edf84bc9df007e30040691af7acd1c41874faac5895bfb"
+"checksum hex 0.3.0 (git+https://github.com/LukasKalbertodt/rust-hex?branch=bump-030)" = "<none>"
 "checksum httparse 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "77f756bed9ee3a83ce98774f4155b42a31b787029013f3a7d83eca714e500e21"
 "checksum humansize 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "92d211e6e70b05749dce515b47684f29a3c8c38bbbb21c50b30aff9eca1b0bd3"
 "checksum hyper 0.10.10 (registry+https://github.com/rust-lang/crates.io-index)" = "36e108e0b1fa2d17491cbaac4bc460dc0956029d10ccf83c913dd0e5db3e7f07"
