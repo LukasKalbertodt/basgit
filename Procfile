@@ -1,1 +1,1 @@
-web: ./target/release/basgit
+web: bin/diesel migration run && ./target/release/basgit
