@@ -1,0 +1,9 @@
+{
+  "name": "basgit",
+  "version": "0.1.0",
+  "description": "This is not really a node.js app. But this way, installing npm deps on Heroku is way easier.",
+  "dependencies": {
+    "less": "^2.7.2",
+    "less-plugin-clean-css": "^1.5.1"
+  }
+}

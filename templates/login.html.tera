@@ -1,14 +1,17 @@
 {% extends "base" %}
-{% block title %}Login - BasGit{% endblock title %}
+{% block title %}Login – BasGit{% endblock title %}
 
 {% block content %}
-    {% if flash %}
-        <p>
-        {{ flash.name }}: {{ flash.msg }}
-        </p>
-    {% endif %}
-    <form method="post" action="/login">
-        <input type="text" name="user_name">
-        <input type="submit" value="Login">
-    </form>
+    <div class="login-box">
+        <h2>Sign in to BasGit</h2>
+        <hr />
+        <form method="post" action="/login">
+            <input type="text" name="id" placeholder="Username or email address">
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit" value="Login">
+        </form>
+
+        <hr />
+        <p>New to BasGit? <a href="/join">Create an account!</a>
+    </div>
 {% endblock content %}

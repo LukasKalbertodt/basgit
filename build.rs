@@ -33,7 +33,9 @@ fn compile_less(manifest_dir: &Path) {
     //
     // We might want to check for Rocket environments instead of the cargo
     // build profile later (TODO).
-    let is_debug = env::var("PROFILE").unwrap() == "debug";
+    let is_debug = env::var("PROFILE").unwrap() == "debug"
+        || env::var("ROCKET_ENV").map(|s| s == "dev").unwrap_or(false)
+        || env::var("ROCKET_ENV").map(|s| s == "development").unwrap_or(false);
     let minify_flag = ["--clean-css"];
     let flags = if is_debug { &[] as &[_] } else { &minify_flag };
 
