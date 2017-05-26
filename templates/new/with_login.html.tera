@@ -1,0 +1,64 @@
+{% extends "base" %}
+{% block title %}New Basket – BasGit{% endblock title %}
+
+{% block content %}
+    <div class="new-basket-container">
+        <h1>Create a new basket</h1>
+        <h6>A basket can contain different kinds of information</h6>
+        <hr />
+        <form method="post" action="/new" class="basgit-form">
+            <!-- basket name -->
+            <div class="basket-owner-name clearfix">
+                <dl class="float-left">
+                    <dt>Owner</dt>
+                    <dd>
+                        <input type="text" name="basket[owner]" value="{{ auth_user.data.username }}" disabled>
+                    </dd>
+                </dl>
+                <span class="slash float-left">/</span>
+                <dl class="float-left">
+                    <dt>Basket name</dt>
+                    <dd>
+                        <input type="text" name="basket[name]">
+                    </dd>
+                </dl>
+            </div>
+            <p>Great repository names are short and memorable.</p>
+
+            <!-- basket description -->
+            <dl>
+                <dt>
+                    Description <span class="gray-thin">(optional)</span>
+                </dt>
+                <dd>
+                    <input class="long-input" type="text" name="basket[description]">
+                </dd>
+            </dl>
+            <hr />
+
+            <!-- privacy settings -->
+            <label class="new-basket-privacy">
+                <input type="radio" name="basket[public]" value="true" />
+                Public
+            </label>
+            <label class="new-basket-privacy">
+                <input type="radio" name="basket[public]" value="false" />
+                Private
+            </label>
+            <hr />
+
+            <!-- basket kind -->
+            <dl>
+                <dt>Basket kind</dt>
+                <dd>
+                    <input type="text" name="basket[kind]">
+                </dd>
+            </dl>
+
+            <hr />
+
+            <!-- submit button -->
+            <input type="submit" value="Create basket" class="button-green">
+        </form>
+    </div>
+{% endblock content %}
