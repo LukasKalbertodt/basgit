@@ -1,12 +1,12 @@
 use rocket_contrib::Template;
 use rocket::http::Status;
 use rocket::response::{Failure, Redirect, Flash};
-use rocket::request::{Form, FlashMessage};
+use rocket::request::Form;
 use rocket::State;
 
 use context::Context;
 use db::Db;
-use model::{basket, AuthUser, Basket, UserAction};
+use model::{AuthUser, Basket};
 
 
 

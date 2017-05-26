@@ -1,7 +1,7 @@
 <div id="header-container">
     <div id="header-logo">
         <a href="/">
-            <img src="static/logo-tmp.svg"/>
+            <img src="/static/logo-tmp.svg"/>
         </a>
     </div>
     <div id="header-search-nav">

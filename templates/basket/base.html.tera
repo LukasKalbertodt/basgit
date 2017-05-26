@@ -1,0 +1,17 @@
+{% extends "base" %}
+
+{% block content %}
+<div class="basket-page">
+    <div class="basket-header">
+        <div class="basket-path-container">
+            <h1><a href="/{{ content.owner }}">{{ content.owner }}</a> / <strong><a href="/{{ content.owner }}/{{ content.name }}">{{ content.name }}</a></strong></h1>
+            <div class="description-container">{% if content.description %}{{ content.description }}{% else %}<i>No description</i>{% endif %}</div>
+        </div>
+        <div class="fork-star-container">
+            Star, Fork, ...
+        </div>
+    </div>
+    <hr />
+    {% block facade_content %}{% endblock facade_content %}
+</div>
+{% endblock content %}

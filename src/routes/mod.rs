@@ -1,6 +1,7 @@
 use rocket::response::NamedFile;
 
 
+pub mod basket;
 pub mod index;
 pub mod login;
 pub mod new;

@@ -3,9 +3,11 @@ use diesel;
 use std::fmt;
 
 use db::schema::baskets;
+use db::schema::users;
 
 use db::Db;
-use model::{basket, AuthUser, PubUser, User, UserAction};
+use model::{basket, AuthUser, PubUser, User};
+use model::permissions::{has_permission, UserAction};
 use routes::new::NewBasketForm;
 use super::MAX_SL_LEN;
 
@@ -57,7 +59,7 @@ impl Basket {
     ) -> Result<Self, CreateError> {
         use diesel::result::{Error as DieselError, DatabaseErrorKind};
 
-        if !auth_user.has_permission(UserAction::CreateBasket { owner: &new.owner }) {
+        if !has_permission(Some(auth_user), UserAction::CreateBasket { owner: &new.owner }) {
             return Err(CreateError::NoPermission { owner: new.owner });
         }
 
@@ -101,6 +103,45 @@ impl Basket {
             data: inserted.unwrap(),
             user,
         })
+    }
+
+    pub fn load(
+        name: &str,
+        owner: &str,
+        auth_user: Option<&AuthUser>,
+        db: &Db,
+    ) -> Option<Self> {
+        baskets::table
+            .inner_join(users::table)
+            .filter(baskets::name.eq(name))
+            .filter(users::username.eq(owner))
+            .first(&*db.conn())
+            .optional()
+            .unwrap()
+            .map(|(data, user)| Self { data, user: PubUser::from_user(user) })
+            .and_then(|basket| {
+                if has_permission(auth_user, UserAction::ViewBasket(&basket)) {
+                    Some(basket)
+                } else {
+                    None
+                }
+            })
+    }
+
+    pub fn is_public(&self) -> bool {
+        self.data.public
+    }
+
+    pub fn owner(&self) -> &str {
+        self.user.username()
+    }
+
+    pub fn name(&self) -> &str {
+        &self.data.name
+    }
+
+    pub fn description(&self) -> Option<&str> {
+        self.data.description.as_ref().map(AsRef::as_ref)
     }
 
     pub fn url(&self) -> String {

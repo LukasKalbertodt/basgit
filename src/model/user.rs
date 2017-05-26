@@ -142,15 +142,16 @@ impl AuthUser {
         cookies.remove(SESSION_COOKIE_NAME);
     }
 
-    pub fn has_permission(&self, action: UserAction) -> bool {
-        use self::UserAction::*;
+    pub fn username(&self) -> &str {
+        &self.data.username
+    }
 
-        match action {
-            CreateBasket { owner } => {
-                // TODO: this will change in the far future
-                owner == self.data.username
-            }
-        }
+    pub fn name(&self) -> Option<&str> {
+        self.data.name.as_ref().map(AsRef::as_ref)
+    }
+
+    pub fn bio(&self) -> Option<&str> {
+        self.data.bio.as_ref().map(AsRef::as_ref)
     }
 }
 
@@ -225,6 +226,10 @@ pub struct PubUser {
 }
 
 impl PubUser {
+    pub fn from_user(data: User) -> Self {
+        Self { data }
+    }
+
     pub fn from_username(username: &str, db: &Db) -> Option<Self> {
         // Quickly check whether the username has a correct format. If not,
         // we can reject it now already, without hitting the database.
@@ -264,11 +269,4 @@ fn is_valid_username(username: &str) -> bool {
 
     username.chars().all(|c| c.is_ascii_alphanumeric() || c == '-')
         && !username.starts_with('-')
-}
-
-pub enum UserAction<'a> {
-    /// Creating a new basket for a given owner.
-    CreateBasket {
-        owner: &'a str,
-    }
 }
