@@ -51,3 +51,18 @@ impl From<FlashMessage> for FlashContext {
         }
     }
 }
+
+macro_rules! adhoc {
+    ($($name:ident : $ty:ty = $val:expr,)+) => {{
+        #[derive(Clone, Debug, Serialize)]
+        struct Context<'a> {
+            _dummy: ::std::marker::PhantomData<&'a ()>,
+            $($name: $ty,)+
+        }
+
+        Context {
+            _dummy: ::std::marker::PhantomData,
+            $($name: $val,)+
+        }
+    }}
+}

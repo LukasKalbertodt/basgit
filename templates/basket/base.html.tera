@@ -11,7 +11,9 @@
             Star, Fork, ...
         </div>
     </div>
-    <hr />
+    <ul class="facade-tab-bar tab-bar">
+        {{ content.facade_bar | safe }}
+    </ul>
     {% block facade_content %}{% endblock facade_content %}
 </div>
 {% endblock content %}

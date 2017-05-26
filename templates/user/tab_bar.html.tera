@@ -1,5 +1,5 @@
 {% macro tab_bar(active, url) %}
-    <ul id="userpage-tab-bar">
+    <ul class="userpage-tab-bar tab-bar">
         <li {% if active == "Overview" %}class="active"{% endif %}>
             <a href="{{ url }}">Overview</a>
         </li>

@@ -16,7 +16,7 @@ extern crate rocket_contrib;
 #[macro_use] extern crate serde_derive;
 
 
-pub mod context;
+#[macro_use] pub mod context;
 pub mod db;
 pub mod model;
 pub mod routes;

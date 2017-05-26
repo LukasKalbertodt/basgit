@@ -1,10 +1,13 @@
 hr {
     border: none;
-    border-top: 1px solid @c-userpage-tabbar-sep;
+    border-top: 1px solid @c-tabbar-sep;
 }
 
 .float-left {
     float: left;
+}
+.float-right {
+    float: right;
 }
 
 .clearfix {}
@@ -37,4 +40,46 @@ h6 {
     color: @c-text-gray;
     font-weight: normal;
     font-size: 14px;
+}
+
+.tab-bar {
+    @height: 45px;
+    @underline-width: 3px;
+
+    display: block;
+    height: @height;
+    padding: 0px;
+    margin-bottom: 20px;
+
+    border-bottom: 1px solid @c-tabbar-sep;
+
+    li {
+        display: inline-block;
+        box-sizing: border-box;
+        height: @height;
+
+        &.active {
+            border-bottom: @underline-width solid @c-tabbar-active;
+        }
+        &:hover {
+            border-bottom: @underline-width solid @c-tabbar-hover;
+        }
+        a {
+            @font-size: 16px;
+            font-size: @font-size;
+            display: block;
+            box-sizing: border-box;
+            height: @height;
+            margin: 0px;
+            padding: 0px 20px;
+            padding-top: @height / 2 - @font-size / 2 - @underline-width / 2;
+
+            text-decoration: none;
+            color: @c-text-dark-gray;
+
+            &:hover {
+                color: @c-text-normal;
+            }
+        }
+    }
 }
