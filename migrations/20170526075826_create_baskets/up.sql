@@ -13,7 +13,7 @@ create table baskets (
 
     description ml_string,
 
-    private bool
+    public bool
         not null,
 
     kind sl_string

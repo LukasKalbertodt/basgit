@@ -242,6 +242,10 @@ impl PubUser {
             .map(|user| PubUser { data: user })
     }
 
+    pub fn id(&self) -> i64 {
+        self.data.id
+    }
+
     pub fn username(&self) -> &str {
         &self.data.username
     }

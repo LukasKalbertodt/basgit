@@ -6,30 +6,27 @@ use rocket::State;
 
 use context::Context;
 use db::Db;
-use model::{basket, AuthUser, UserAction};
+use model::{basket, AuthUser, Basket, UserAction};
 
 
 
 ///
 #[get("/new")]
 fn with_login(auth_user: AuthUser) -> Template {
-    render_form(auth_user, None)
+    render_form(auth_user, None, None)
 }
 
 
 fn render_form(
     auth_user: AuthUser,
-    error: Option<(String, Option<NewBasketForm>)>,
+    error: Option<String>,
+    values: Option<NewBasketForm>,
 ) -> Template {
 
-    let (msg, form_data) = match error {
-        Some(e) => (Some(e.0), Some(e.1)),
-        None => (None, None),
-    };
     let context = Context {
-        flash: msg.map(|e| Flash::error((), e).into()),
+        flash: error.map(|e| Flash::error((), e).into()),
         auth_user: Some(auth_user),
-        content: form_data,
+        content: values,
         .. Context::default()
     };
     Template::render("new/with_login", &context)
@@ -43,56 +40,42 @@ fn without_login() -> Failure {
 
 
 #[derive(Clone, Serialize, FromForm)]
-struct NewBasketForm {
-    owner: String,
-    name: String,
-    description: String,
-    is_public: bool,
-    kind: String,
+pub struct NewBasketForm {
+    pub owner: String,
+    pub name: String,
+    pub description: String,
+    pub is_public: bool,
+    pub kind: String,
 }
 
-#[post("/new", data = "<new_basket>")]
+#[post("/new", data = "<new>")]
 fn create(
     auth_user: AuthUser,
-    new_basket: Option<Form<NewBasketForm>>,
+    new: Option<Form<NewBasketForm>>,
     db: State<Db>,
 ) -> Result<Redirect, Template> {
-    // Validate input data.
-    {
-        let new_basket = new_basket.map(|f| f.into_inner());
-        let error = |msg| render_form(
-            auth_user.clone(),
-            Some((
-                msg,
-                new_basket.clone(),
-            ))
-        );
+    // Check if the post request contains the correct data that should be
+    // saved in the `NewBasketForm`.
+    let new = match new {
+        Some(form) => form.into_inner(),
+        None => {
+            return Err(render_form(
+                auth_user,
+                Some("Invalid form data!".into()),
+                None
+            ));
+        }
+    };
 
-        let new_basket = new_basket.clone().ok_or_else(|| {
-            error("Invalid form data!".to_string())
+    let form_data_clone = new.clone();
+    let basket = Basket::create(new, &auth_user, &db)
+        .map_err(|e| {
+            render_form(
+                auth_user,
+                Some(e.to_string()),
+                Some(form_data_clone),
+            )
         })?;
 
-        let action = UserAction::CreateBasket { owner: &new_basket.owner };
-        if !auth_user.has_permission(action) {
-            let msg = format!(
-                "You don't have the permission to create a basket for '{}'!",
-                new_basket.owner,
-            );
-            return Err(error(msg));
-        }
-
-        if new_basket.name.is_empty() {
-            return Err(error("The basket's name can't be empty!".to_string()));
-        }
-        if !basket::is_valid_name(&new_basket.name) {
-            return Err(error(
-                "The basket's name contains invalid characters! Only \
-                alphanumerical ASCII characters and dashes are allowed."
-                    .to_string()
-            ));
-
-        }
-    }
-
-    Ok(Redirect::to("/"))
+    Ok(Redirect::to(&basket.url()))
 }
