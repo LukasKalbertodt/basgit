@@ -45,6 +45,7 @@ fn main() {
             // `/new` for creating new baskets
             new::with_login,
             new::without_login,
+            new::create,
 
             // Serving static files in `static/`
             routes::static_files,

@@ -141,6 +141,17 @@ impl AuthUser {
         // Remove from cookie jar.
         cookies.remove(SESSION_COOKIE_NAME);
     }
+
+    pub fn has_permission(&self, action: UserAction) -> bool {
+        use self::UserAction::*;
+
+        match action {
+            CreateBasket { owner } => {
+                // TODO: this will change in the far future
+                owner == self.data.username
+            }
+        }
+    }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for AuthUser {
@@ -249,4 +260,11 @@ fn is_valid_username(username: &str) -> bool {
 
     username.chars().all(|c| c.is_ascii_alphanumeric() || c == '-')
         && !username.starts_with('-')
+}
+
+pub enum UserAction<'a> {
+    /// Creating a new basket for a given owner.
+    CreateBasket {
+        owner: &'a str,
+    }
 }

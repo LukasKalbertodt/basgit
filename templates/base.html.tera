@@ -14,12 +14,12 @@
     </div>
     <div id="tl-content">
         {% block raw_content %}
+        {% if flash %}
+            <div class="flash-box flash-{{ flash.name }}">
+                {{ flash.msg }}
+            </div>
+        {% endif %}
         <div class="tl-centered">
-            {% if flash %}
-                <div class="login-flash flash-{{ flash.name }}">
-                    {{ flash.msg }}
-                </div>
-            {% endif %}
             {% block content %}
             {% endblock content %}
         </div>

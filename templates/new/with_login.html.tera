@@ -12,14 +12,14 @@
                 <dl class="float-left">
                     <dt>Owner</dt>
                     <dd>
-                        <input type="text" name="basket[owner]" value="{{ auth_user.data.username }}" disabled>
+                        <input type="text" name="owner" value="{{ auth_user.data.username }}" readonly>
                     </dd>
                 </dl>
                 <span class="slash float-left">/</span>
                 <dl class="float-left">
                     <dt>Basket name</dt>
                     <dd>
-                        <input type="text" name="basket[name]">
+                        <input type="text" name="name" {% if content %}value="{{ content.name }}"{% endif %}>
                     </dd>
                 </dl>
             </div>
@@ -31,18 +31,18 @@
                     Description <span class="gray-thin">(optional)</span>
                 </dt>
                 <dd>
-                    <input class="long-input" type="text" name="basket[description]">
+                    <input class="long-input" type="text" name="description" {% if content %}value="{{ content.description }}"{% endif %}>
                 </dd>
             </dl>
             <hr />
 
             <!-- privacy settings -->
             <label class="new-basket-privacy">
-                <input type="radio" name="basket[public]" value="true" />
+                <input type="radio" name="is_public" value="true" {% if content.is_public %}checked{% endif %} />
                 Public
             </label>
             <label class="new-basket-privacy">
-                <input type="radio" name="basket[public]" value="false" />
+                <input type="radio" name="is_public" value="false" {% if not content.is_public %}checked{% endif %} />
                 Private
             </label>
             <hr />
@@ -51,7 +51,7 @@
             <dl>
                 <dt>Basket kind</dt>
                 <dd>
-                    <input type="text" name="basket[kind]">
+                    <input type="text" name="kind" {% if content %}value="{{ content.kind }}"{% endif %}>
                 </dd>
             </dl>
 
