@@ -14,6 +14,7 @@ extern crate rand;
 extern crate rocket;
 extern crate rocket_contrib;
 #[macro_use] extern crate serde_derive;
+#[macro_use] extern crate serde_json;
 
 
 #[macro_use] pub mod context;
