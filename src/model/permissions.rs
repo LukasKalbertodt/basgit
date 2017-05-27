@@ -1,4 +1,4 @@
-use model::{AuthUser, Basket};
+use model::{AuthUser, BasketRecord, PubUser};
 
 
 pub enum UserAction<'a> {
@@ -6,7 +6,10 @@ pub enum UserAction<'a> {
     CreateBasket {
         owner: &'a str,
     },
-    ViewBasket(&'a Basket),
+    ViewBasket {
+        owner: &'a PubUser,
+        basket: &'a BasketRecord,
+    },
 }
 
 pub fn has_permission(user: Option<&AuthUser>, action: UserAction) -> bool {
@@ -17,9 +20,9 @@ pub fn has_permission(user: Option<&AuthUser>, action: UserAction) -> bool {
             // TODO: this will change in the far future
             user.map(|u| owner == u.username()).unwrap_or(false)
         }
-        ViewBasket(basket) => {
+        ViewBasket { owner, basket } => {
             basket.is_public() ||
-                user.map(|u| basket.owner() == u.username()).unwrap_or(false)
+                user.map(|u| owner.username() == u.username()).unwrap_or(false)
         }
     }
 }

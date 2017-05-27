@@ -9,9 +9,10 @@ use rocket::request::{self, FromRequest, Request};
 use std::ops::Deref;
 use serde::{Serialize, Serializer};
 
-use model::{self, UserEmail, Session};
+use model::{self, BasketRecord, UserEmail, Session};
+use model::permissions::{has_permission, UserAction};
 use db::Db;
-use db::schema::{users, user_emails, sessions};
+use db::schema::{baskets, users, user_emails, sessions};
 
 
 const SESSION_COOKIE_NAME: &str = "session";
@@ -28,6 +29,7 @@ const SESSION_ID_LEN: usize = 16;
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Identifiable, Queryable, Associations)]
 #[has_many(user_emails)]
 #[has_many(sessions)]
+#[has_many(baskets)]
 pub struct User {
     id: i64,
 
@@ -271,6 +273,20 @@ impl PubUser {
 
     pub fn bio(&self) -> Option<&str> {
         self.0.bio.as_ref().map(AsRef::as_ref)
+    }
+
+    pub fn baskets(&self, auth_user: Option<&AuthUser>, db: &Db) -> Vec<BasketRecord> {
+        let mut all = BasketRecord::belonging_to(&self.0)
+            .load(&*db.conn())
+            .unwrap();
+        all.retain(|br| {
+
+            has_permission(auth_user, UserAction::ViewBasket {
+                owner: self,
+                basket: br,
+            })
+        });
+        all
     }
 }
 

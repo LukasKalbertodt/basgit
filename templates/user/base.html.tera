@@ -4,7 +4,7 @@
 <div id="userpage">
     <div id="userpage-info">
         <img id="userpage-info-avatar" src="https://api.adorable.io/avatars/285/{{ content.user.username }}.png" />
-        {% if content.name %}
+        {% if content.user.name %}
             <h1>{{ content.user.name }}</h1>
         {% endif %}
         <h2>{{ content.user.username }}</h2>

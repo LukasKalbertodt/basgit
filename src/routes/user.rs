@@ -74,14 +74,16 @@ fn overview_tab(
 }
 
 fn basket_tab(
-    _user: &PubUser,
-    _auth_user: Option<&AuthUser>,
-    _db: &Db,
+    user: &PubUser,
+    auth_user: Option<&AuthUser>,
+    db: &Db,
 ) -> (&'static str, &'static str, serde_json::Value) {
+    let baskets = user.baskets(auth_user, db);
+
     (
         "user/baskets",
         "baskets",
-        json!({}),
+        json!(baskets),
     )
 }
 

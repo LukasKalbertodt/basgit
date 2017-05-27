@@ -7,7 +7,13 @@
 
 {% block tab_content %}
     {{ macros::tab_bar(active="Baskets", url=content.user_url) }}
-    <div id="basket-list">
-        No baskets...
-    </div>
+    <ul id="basket-list">
+        {% for basket in content.baskets %}
+            <li class="basket-list-element">
+                <h3><a href="">{{ basket.name }}</a></h3>
+                <p>{{ basket.description }}</p>
+                <p>{{ basket.kind }}</p>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock tab_content %}

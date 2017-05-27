@@ -1,6 +1,7 @@
 use diesel::prelude::*;
 use diesel;
 use std::fmt;
+use std::ops::Deref;
 
 use db::schema::baskets;
 use db::schema::users;
@@ -22,7 +23,7 @@ pub fn is_valid_name(s: &str) -> bool {
 }
 
 
-#[derive(Clone, Debug, Serialize, Queryable, Associations)]
+#[derive(Clone, Debug, Serialize, Identifiable, Queryable, Associations)]
 #[table_name = "baskets"]
 #[belongs_to(User)]
 pub struct BasketRecord {
@@ -33,6 +34,20 @@ pub struct BasketRecord {
     public: bool,
     kind: String,
     forked_from: Option<i64>,
+}
+
+impl BasketRecord {
+    pub fn is_public(&self) -> bool {
+        self.public
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn description(&self) -> Option<&str> {
+        self.description.as_ref().map(AsRef::as_ref)
+    }
 }
 
 #[derive(Clone, Debug, Insertable)]
@@ -47,7 +62,7 @@ pub struct NewBasket {
 }
 
 pub struct Basket {
-    data: BasketRecord,
+    record: BasketRecord,
     user: PubUser,
 }
 
@@ -100,7 +115,7 @@ impl Basket {
         }
 
         Ok(Self {
-            data: inserted.unwrap(),
+            record: inserted.unwrap(),
             user,
         })
     }
@@ -118,34 +133,34 @@ impl Basket {
             .first(&*db.conn())
             .optional()
             .unwrap()
-            .map(|(data, user)| Self { data, user: PubUser::from_user(user) })
-            .and_then(|basket| {
-                if has_permission(auth_user, UserAction::ViewBasket(&basket)) {
-                    Some(basket)
+            // .map(|(data, user)| Self { data, user: PubUser::from_user(user) })
+            .and_then(|(record, user)| {
+                let user = PubUser::from_user(user);
+                let can_view = has_permission(auth_user, UserAction::ViewBasket {
+                    owner: &user,
+                    basket: &record,
+                });
+                if can_view {
+                    Some(Self { record, user })
                 } else {
                     None
                 }
             })
     }
 
-    pub fn is_public(&self) -> bool {
-        self.data.public
-    }
-
     pub fn owner(&self) -> &str {
         self.user.username()
     }
 
-    pub fn name(&self) -> &str {
-        &self.data.name
-    }
-
-    pub fn description(&self) -> Option<&str> {
-        self.data.description.as_ref().map(AsRef::as_ref)
-    }
-
     pub fn url(&self) -> String {
-        format!("/{}/{}", self.user.username(), self.data.name)
+        format!("/{}/{}", self.user.username(), self.record.name)
+    }
+}
+
+impl Deref for Basket {
+    type Target = BasketRecord;
+    fn deref(&self) -> &Self::Target {
+        &self.record
     }
 }
 
