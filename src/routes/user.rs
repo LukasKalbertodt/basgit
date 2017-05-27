@@ -40,12 +40,18 @@ fn handler(
                 => stars_tab(&user, auth_user.as_ref(), &db),
         };
 
+        let user_url = format!("/{}", user.username());
+        let title_name = match user.name() {
+            Some(name) => format!("{} ({})", user.username(), name),
+            None => user.username().to_string(),
+        };
+
         let context = Context {
             auth_user,
             content: Some(json!({
-                "username": user.username(),
-                "name": user.name(),
-                "bio": user.bio(),
+                "user": user,
+                "user_url": user_url,
+                "title_name": title_name,
                 key: value,
             })),
             .. Context::default()

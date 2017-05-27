@@ -1,12 +1,12 @@
 {% extends "user/base" %}
 
-{% import "user/tab_bar" as macros %}
+{% import "user/macros" as macros %}
 
-{% block title %}{{ content.username }}{% if content.name %} ({{ content.name }}){% endif %} / Baskets – BasGit{% endblock title %}
+{% block title %}{{ content.title_name }} / Baskets – BasGit{% endblock title %}
 {% block content %}{{ super() }}{% endblock content %}
 
 {% block tab_content %}
-    {{ macros::tab_bar(active="Baskets", url=content.username) }}
+    {{ macros::tab_bar(active="Baskets", url=content.user_url) }}
     <div id="basket-list">
         No baskets...
     </div>

@@ -1,13 +1,13 @@
 {% macro tab_bar(active, url) %}
     <ul class="userpage-tab-bar tab-bar">
         <li {% if active == "Overview" %}class="active"{% endif %}>
-            <a href="{{ url }}">Overview</a>
+            <a href="{{ url | safe }}">Overview</a>
         </li>
         <li {% if active == "Baskets" %}class="active"{% endif %}>
-            <a href="{{ url }}?tab=baskets">Baskets</a>
+            <a href="{{ url | safe }}?tab=baskets">Baskets</a>
         </li>
         <li {% if active == "Stars" %}class="active"{% endif %}>
-            <a href="{{ url }}?tab=stars">Stars</a>
+            <a href="{{ url | safe }}?tab=stars">Stars</a>
         </li>
     </ul>
 {% endmacro tab_bar %}

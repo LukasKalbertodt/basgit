@@ -2,12 +2,12 @@
 {% block title %}BasGit{% endblock title %}
 
 {% block content %}
-<h1>Welcome back, {{ auth_user.data.username }}!</h1>
+<h1>Welcome back, {{ auth_user.username }}!</h1>
 <p>
     Quick'n'dirty quick links:
 </p>
 <ul>
-    <li><a href="/{{ auth_user.data.username }}">Your profile</a></li>
+    <li><a href="/{{ auth_user.username }}">Your profile</a></li>
     <li><a href="/new">Create a new basket</a></li>
 </ul>
 {% endblock content %}

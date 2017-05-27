@@ -3,11 +3,11 @@
 {% block content %}
 <div id="userpage">
     <div id="userpage-info">
-        <img id="userpage-info-avatar" src="https://api.adorable.io/avatars/285/{{ content.username }}.png" />
+        <img id="userpage-info-avatar" src="https://api.adorable.io/avatars/285/{{ content.user.username }}.png" />
         {% if content.name %}
-            <h1>{{ content.name }}</h1>
+            <h1>{{ content.user.name }}</h1>
         {% endif %}
-        <h2>{{ content.username }}</h2>
+        <h2>{{ content.user.username }}</h2>
     </div>
     <div>
         {% block tab_content %}{% endblock tab_content %}

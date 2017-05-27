@@ -19,7 +19,7 @@
     <div id="header-user-container">
         <div id="header-user">
             {% if auth_user %}
-                Hi, {{ auth_user.data.name }}! <a href="/logout">Logout</a>
+                Hi, {{ auth_user.name }}! <a href="/logout">Logout</a>
             {% else %}
                 <a href="/login">Login</a>
             {% endif %}
