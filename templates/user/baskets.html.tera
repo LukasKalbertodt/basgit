@@ -10,7 +10,7 @@
     <ul id="basket-list">
         {% for basket in content.baskets %}
             <li class="basket-list-element">
-                <h3><a href="">{{ basket.name }}</a></h3>
+                <h3><a href="{{ basket.url }}">{{ basket.name }}</a></h3>
                 <p>{{ basket.description }}</p>
                 <p>{{ basket.kind }}</p>
             </li>

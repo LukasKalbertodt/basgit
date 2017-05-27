@@ -9,7 +9,7 @@ use rocket::request::{self, FromRequest, Request};
 use std::ops::Deref;
 use serde::{Serialize, Serializer};
 
-use model::{self, BasketRecord, UserEmail, Session};
+use model::{self, Basket, BasketRecord, UserEmail, Session};
 use model::permissions::{has_permission, UserAction};
 use db::Db;
 use db::schema::{baskets, users, user_emails, sessions};
@@ -160,7 +160,7 @@ impl Serialize for AuthUser {
     {
         use serde::ser::SerializeStruct;
 
-        let mut s = serializer.serialize_struct("auth_user", 3)?;
+        let mut s = serializer.serialize_struct("auth_user", 4)?;
         s.serialize_field("id", &self.id())?;
         s.serialize_field("username", self.username())?;
         s.serialize_field("name", &self.name())?;
@@ -275,18 +275,19 @@ impl PubUser {
         self.0.bio.as_ref().map(AsRef::as_ref)
     }
 
-    pub fn baskets(&self, auth_user: Option<&AuthUser>, db: &Db) -> Vec<BasketRecord> {
-        let mut all = BasketRecord::belonging_to(&self.0)
+    pub fn baskets(&self, auth_user: Option<&AuthUser>, db: &Db) -> Vec<Basket> {
+        BasketRecord::belonging_to(&self.0)
             .load(&*db.conn())
-            .unwrap();
-        all.retain(|br| {
-
-            has_permission(auth_user, UserAction::ViewBasket {
-                owner: self,
-                basket: br,
+            .unwrap()
+            .into_iter()
+            .filter(|record| {
+                has_permission(auth_user, UserAction::ViewBasket {
+                    owner: self,
+                    basket: record,
+                })
             })
-        });
-        all
+            .map(|record| Basket::from_parts(record, self.clone()))
+            .collect()
     }
 }
 
@@ -296,7 +297,7 @@ impl Serialize for PubUser {
     {
         use serde::ser::SerializeStruct;
 
-        let mut s = serializer.serialize_struct("auth_user", 3)?;
+        let mut s = serializer.serialize_struct("PubUser", 3)?;
         // Skipping id: the id should never be sent to the user
         s.serialize_field("username", self.username())?;
         s.serialize_field("name", &self.name())?;

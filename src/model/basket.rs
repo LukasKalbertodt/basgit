@@ -1,5 +1,6 @@
 use diesel::prelude::*;
 use diesel;
+use serde::{Serialize, Serializer};
 use std::fmt;
 use std::ops::Deref;
 
@@ -48,6 +49,10 @@ impl BasketRecord {
     pub fn description(&self) -> Option<&str> {
         self.description.as_ref().map(AsRef::as_ref)
     }
+
+    pub fn kind(&self) -> &str {
+        &self.kind
+    }
 }
 
 #[derive(Clone, Debug, Insertable)]
@@ -67,6 +72,9 @@ pub struct Basket {
 }
 
 impl Basket {
+    pub fn from_parts(record: BasketRecord, user: PubUser) -> Self {
+        Self { record, user }
+    }
     pub fn create(
         new: NewBasketForm,
         auth_user: &AuthUser,
@@ -161,6 +169,24 @@ impl Deref for Basket {
     type Target = BasketRecord;
     fn deref(&self) -> &Self::Target {
         &self.record
+    }
+}
+
+impl Serialize for Basket {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        use serde::ser::SerializeStruct;
+
+        let mut s = serializer.serialize_struct("Basket", 6)?;
+        // Skipping id: the id should never be sent to the user
+        s.serialize_field("name", self.name())?;
+        s.serialize_field("description", &self.description())?;
+        s.serialize_field("is_public", &self.is_public())?;
+        s.serialize_field("url", &self.url())?;
+        s.serialize_field("kind", self.kind())?;
+        s.serialize_field("owner", self.owner())?;
+        s.end()
     }
 }
 
