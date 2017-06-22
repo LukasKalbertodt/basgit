@@ -16,6 +16,17 @@ pub fn index(
     handler(username, basket, auth_user, db, None)
 }
 
+#[get("/<username>/<basket>/<facade>", rank = 10)]
+pub fn facade(
+    username: &str,
+    basket: &str,
+    auth_user: Option<AuthUser>,
+    db: State<Db>,
+    facade: &str,
+) -> Option<Template> {
+    handler(username, basket, auth_user, db, Some(facade))
+}
+
 fn handler(
     username: &str,
     basket: &str,

@@ -51,6 +51,7 @@ fn main() {
 
             // All routes with the form `/<username>/<basket>`
             basket::index,
+            basket::facade,
 
             // Serving static files in `static/`
             routes::static_files,
