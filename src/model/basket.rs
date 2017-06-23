@@ -75,6 +75,7 @@ impl Basket {
     pub fn from_parts(record: BasketRecord, user: PubUser) -> Self {
         Self { record, user }
     }
+
     pub fn create(
         new: NewBasketForm,
         auth_user: &AuthUser,
@@ -141,7 +142,6 @@ impl Basket {
             .first(&*db.conn())
             .optional()
             .unwrap()
-            // .map(|(data, user)| Self { data, user: PubUser::from_user(user) })
             .and_then(|(record, user)| {
                 let user = PubUser::from_user(user);
                 let can_view = has_permission(auth_user, UserAction::ViewBasket {

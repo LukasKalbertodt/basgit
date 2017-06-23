@@ -18,7 +18,7 @@ extern crate serde;
 #[macro_use] extern crate serde_json;
 
 
-#[macro_use] pub mod context;
+pub mod context;
 pub mod db;
 pub mod model;
 pub mod routes;
