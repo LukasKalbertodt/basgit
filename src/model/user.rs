@@ -6,10 +6,13 @@ use rand::{self, Rng};
 use rocket::{Outcome, State};
 use rocket::http::{Cookie, Cookies};
 use rocket::request::{self, FromRequest, Request};
+use std::ops::Deref;
+use serde::{Serialize, Serializer};
 
-use model::{self, UserEmail, Session};
+use model::{self, Basket, BasketRecord, UserEmail, Session};
+use model::permissions::{has_permission, UserAction};
 use db::Db;
-use db::schema::{users, user_emails, sessions};
+use db::schema::{baskets, users, user_emails, sessions};
 
 
 const SESSION_COOKIE_NAME: &str = "session";
@@ -26,6 +29,7 @@ const SESSION_ID_LEN: usize = 16;
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Identifiable, Queryable, Associations)]
 #[has_many(user_emails)]
 #[has_many(sessions)]
+#[has_many(baskets)]
 pub struct User {
     id: i64,
 
@@ -40,9 +44,9 @@ pub struct User {
 
 /// An authorized user with an active session. This type doesn't restrict
 /// access to any properties, as the user is logged in.
-#[derive(Clone, Eq, PartialEq, Serialize)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct AuthUser {
-    data: User,
+    user: PubUser,
     session: Option<Session>,
 }
 
@@ -85,7 +89,7 @@ impl AuthUser {
                 Err(LoginError::NoPasswordSet)
             } else if bcrypt::verify(password, user.password.as_ref().unwrap()) {
                 Ok(AuthUser {
-                    data: user,
+                    user: PubUser(user),
                     session: None,
                 })
             } else {
@@ -94,8 +98,8 @@ impl AuthUser {
         })
     }
 
-    pub fn into_data(self) -> User {
-        self.data
+    pub fn into_pub_user(self) -> PubUser {
+        self.user
     }
 
     pub fn create_session(&mut self, cookies: &Cookies, db: &Db) {
@@ -108,7 +112,7 @@ impl AuthUser {
         // Insert session id linked with the user id into the database.
         let new_session = model::NewSession {
             id: id.to_vec(),
-            user_id: self.data.id,
+            user_id: self.user.id(),
         };
         let inserted_session = diesel::insert(&new_session)
             .into(sessions::table)
@@ -140,6 +144,28 @@ impl AuthUser {
 
         // Remove from cookie jar.
         cookies.remove(SESSION_COOKIE_NAME);
+    }
+}
+
+impl Deref for AuthUser {
+    type Target = PubUser;
+    fn deref(&self) -> &Self::Target {
+        &self.user
+    }
+}
+
+impl Serialize for AuthUser {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        use serde::ser::SerializeStruct;
+
+        let mut s = serializer.serialize_struct("auth_user", 4)?;
+        s.serialize_field("id", &self.id())?;
+        s.serialize_field("username", self.username())?;
+        s.serialize_field("name", &self.name())?;
+        s.serialize_field("bio", &self.bio())?;
+        s.end()
     }
 }
 
@@ -175,7 +201,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for AuthUser {
             // TODO: maybe check age of session
             .map(|(session, user)| {
                 Outcome::Success(AuthUser {
-                    data:user,
+                    user: PubUser(user),
                     session: Some(session),
                 })
             })
@@ -208,12 +234,14 @@ impl LoginError {
 
 /// A public view of a user. Exposes only properties that are supposed to
 /// be seen by everyone.
-#[derive(Clone, Eq, PartialEq, Serialize)]
-pub struct PubUser {
-    data: User,
-}
+#[derive(Clone, Eq, PartialEq)]
+pub struct PubUser(User);
 
 impl PubUser {
+    pub fn from_user(user: User) -> Self {
+        PubUser(user)
+    }
+
     pub fn from_username(username: &str, db: &Db) -> Option<Self> {
         // Quickly check whether the username has a correct format. If not,
         // we can reject it now already, without hitting the database.
@@ -228,19 +256,53 @@ impl PubUser {
             .first(&*db.conn())
             .optional()
             .unwrap()
-            .map(|user| PubUser { data: user })
+            .map(PubUser)
+    }
+
+    pub fn id(&self) -> i64 {
+        self.0.id
     }
 
     pub fn username(&self) -> &str {
-        &self.data.username
+        &self.0.username
     }
 
     pub fn name(&self) -> Option<&str> {
-        self.data.name.as_ref().map(AsRef::as_ref)
+        self.0.name.as_ref().map(AsRef::as_ref)
     }
 
     pub fn bio(&self) -> Option<&str> {
-        self.data.bio.as_ref().map(AsRef::as_ref)
+        self.0.bio.as_ref().map(AsRef::as_ref)
+    }
+
+    pub fn baskets(&self, auth_user: Option<&AuthUser>, db: &Db) -> Vec<Basket> {
+        BasketRecord::belonging_to(&self.0)
+            .load(&*db.conn())
+            .unwrap()
+            .into_iter()
+            .filter(|record| {
+                has_permission(auth_user, UserAction::ViewBasket {
+                    owner: self,
+                    basket: record,
+                })
+            })
+            .map(|record| Basket::from_parts(record, self.clone()))
+            .collect()
+    }
+}
+
+impl Serialize for PubUser {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        use serde::ser::SerializeStruct;
+
+        let mut s = serializer.serialize_struct("PubUser", 3)?;
+        // Skipping id: the id should never be sent to the user
+        s.serialize_field("username", self.username())?;
+        s.serialize_field("name", &self.name())?;
+        s.serialize_field("bio", &self.bio())?;
+        s.end()
     }
 }
 

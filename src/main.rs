@@ -13,7 +13,9 @@ extern crate r2d2_diesel;
 extern crate rand;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate serde;
 #[macro_use] extern crate serde_derive;
+#[macro_use] extern crate serde_json;
 
 
 pub mod context;
@@ -22,7 +24,7 @@ pub mod model;
 pub mod routes;
 
 fn main() {
-    use routes::{self, index, login, user};
+    use routes::{self, basket, index, login, new, user};
     use db::Db;
 
     rocket::ignite()
@@ -41,6 +43,15 @@ fn main() {
             // `/<user>` routes
             user::index,
             user::tabs,
+
+            // `/new` for creating new baskets
+            new::with_login,
+            new::without_login,
+            new::create,
+
+            // All routes with the form `/<username>/<basket>`
+            basket::index,
+            basket::facade,
 
             // Serving static files in `static/`
             routes::static_files,

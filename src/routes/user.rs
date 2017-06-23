@@ -1,6 +1,7 @@
 use rocket_contrib::Template;
 use rocket::State;
 use rocket::request::{FormItems, FromForm};
+use serde_json;
 
 use model::{AuthUser, PubUser};
 use context::Context;
@@ -28,32 +29,74 @@ fn handler(
     db: State<Db>,
     tab: UserpageTab,
 ) -> Option<Template> {
-    #[derive(Debug, Clone, Serialize)]
-    struct UserIndexContext<'a> {
-        username: &'a str,
-        name: Option<&'a str>,
-        bio: Option<&'a str>,
-    }
 
-    PubUser::from_username(username, &db).map(|pub_user| {
-        let context = Context {
-            auth_user,
-            content: Some(UserIndexContext {
-                username: pub_user.username(),
-                name: pub_user.name(),
-                bio: pub_user.bio(),
-            }),
-            .. Context::default()
+    PubUser::from_username(username, &db).map(|user| {
+        let (template, key, value) = match tab {
+            UserpageTab::Overview
+                => overview_tab(&user, auth_user.as_ref(), &db),
+            UserpageTab::Baskets
+                => basket_tab(&user, auth_user.as_ref(), &db),
+            UserpageTab::Stars
+                => stars_tab(&user, auth_user.as_ref(), &db),
         };
 
-        let template = match tab {
-            UserpageTab::Overview => "user/overview",
-            UserpageTab::Baskets => "user/baskets",
-            UserpageTab::Stars => "user/stars",
+        let user_url = format!("/{}", user.username());
+        let title_name = match user.name() {
+            Some(name) => format!("{} ({})", user.username(), name),
+            None => user.username().to_string(),
+        };
+
+        let context = Context {
+            auth_user,
+            content: Some(json!({
+                "user": user,
+                "user_url": user_url,
+                "title_name": title_name,
+                key: value,
+            })),
+            .. Context::default()
         };
 
         Template::render(template, &context)
     })
+}
+
+fn overview_tab(
+    _user: &PubUser,
+    _auth_user: Option<&AuthUser>,
+    _db: &Db,
+) -> (&'static str, &'static str, serde_json::Value) {
+    (
+        "user/overview",
+        "overview",
+        json!({}),
+    )
+}
+
+fn basket_tab(
+    user: &PubUser,
+    auth_user: Option<&AuthUser>,
+    db: &Db,
+) -> (&'static str, &'static str, serde_json::Value) {
+    let baskets = user.baskets(auth_user, db);
+
+    (
+        "user/baskets",
+        "baskets",
+        json!(baskets),
+    )
+}
+
+fn stars_tab(
+    _user: &PubUser,
+    _auth_user: Option<&AuthUser>,
+    _db: &Db,
+) -> (&'static str, &'static str, serde_json::Value) {
+    (
+        "user/stars",
+        "stars",
+        json!({}),
+    )
 }
 
 pub enum UserpageTab {
