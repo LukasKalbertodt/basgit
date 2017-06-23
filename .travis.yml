@@ -1,6 +1,6 @@
 language: rust
 rust:
-  - nightly-2017-05-03
+  - nightly-2017-06-21
 
 services:
   - postgresql
