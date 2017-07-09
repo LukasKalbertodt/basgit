@@ -38,6 +38,9 @@ fn handler(
         .map(|basket| {
             // TODO: load facade
 
+            let repo = basket.open_repo();
+            repo.debug();
+
             let active_facade = facade.unwrap_or("settings");
             let context = Context {
                 auth_user,

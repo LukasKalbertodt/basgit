@@ -1,3 +1,6 @@
 /target/
 /static/*.css
 .env
+
+# Our web app creates stuff in this folder
+/repos/

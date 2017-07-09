@@ -8,7 +8,7 @@ use db::schema::baskets;
 use db::schema::users;
 
 use db::Db;
-use model::{basket, AuthUser, PubUser, User};
+use model::{basket, AuthUser, PubUser, Repo, User};
 use model::permissions::{has_permission, UserAction};
 use routes::new::NewBasketForm;
 use super::MAX_SL_LEN;
@@ -127,6 +127,11 @@ impl Basket {
             record: inserted.unwrap(),
             owner,
         };
+
+        // Create repository on disk
+        Repo::create(&out);
+
+        Ok(out)
     }
 
     pub fn load(
@@ -160,8 +165,8 @@ impl Basket {
         format!("/{}/{}", self.owner.username(), self.record.name)
     }
 
-    pub fn url(&self) -> String {
-        format!("/{}/{}", self.user.username(), self.record.name)
+    pub fn open_repo(&self) -> Repo {
+        Repo::open(&self)
     }
 }
 

@@ -6,6 +6,7 @@ extern crate chrono;
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_codegen;
 extern crate dotenv;
+extern crate git2;
 extern crate hex;
 extern crate pwhash;
 extern crate r2d2;
