@@ -2,6 +2,7 @@
 #![feature(ascii_ctype)]
 #![plugin(rocket_codegen)]
 
+extern crate base64;
 extern crate chrono;
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_codegen;
@@ -19,6 +20,7 @@ extern crate serde;
 #[macro_use] extern crate serde_json;
 
 
+pub mod api;
 pub mod context;
 pub mod db;
 pub mod model;
@@ -56,6 +58,11 @@ fn main() {
 
             // Serving static files in `static/`
             routes::static_files,
+        ])
+        .mount("/api/v1/", routes![
+            api::v1::repo::tree,
+            api::v1::repo::commit,
+            api::v1::repo::blob,
         ])
         .launch();
 }

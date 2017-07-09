@@ -56,6 +56,10 @@ impl<'a> Repo<'a> {
         Self { repo, basket }
     }
 
+    pub fn raw(&self) -> &Repository {
+        &self.repo
+    }
+
     pub fn debug(&self) {
         println!("{:?}", self.repo.index().unwrap().path());
     }
