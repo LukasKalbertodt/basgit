@@ -1,3 +1,5 @@
+use std::path::{Path, PathBuf};
+
 use rocket::State;
 use git2;
 use base64;
@@ -163,4 +165,85 @@ pub fn blob(
     ApiResponse::Ok(BlobResponse {
         data: base64::encode(blob.content()),
     })
+}
+
+
+// ============================================================================
+// repo/commit
+// ============================================================================
+
+#[derive(Serialize, Deserialize, FromForm)]
+pub struct TreeEntryReq {
+    username: String,
+    basket: String,
+    commit_ref: String,
+    path: String,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub enum TreeEntryResponse {
+    Tree {
+        entries: Vec<TreeEntry>,
+    },
+    Blob {
+        content: String,
+    }
+}
+
+#[get("/repo/tree_entry?<msg>")]
+pub fn tree_entry(
+    msg: TreeEntryReq,
+    db: State<Db>,
+    auth_user: Option<AuthUser>
+) -> ApiResponse<TreeEntryResponse> {
+    let basket = match Basket::load(&msg.basket, &msg.username, auth_user.as_ref(), &db) {
+        Some(b) => b,
+        None => return ApiResponse::NotFound,
+    };
+
+    let repo = basket.open_repo();
+    let commit_id = match repo.raw().refname_to_id(&msg.commit_ref) {
+        Ok(id) => id,
+        Err(_) => return ApiResponse::BadRequest {
+            msg: "invalid reference name".into(),
+        },
+    };
+
+    let commit = match repo.raw().find_commit(commit_id) {
+        Ok(c) => c,
+        Err(_) => return ApiResponse::BadRequest {
+            msg: "reference does not point to a commit".into(),
+        },
+    };
+
+    let tree = commit.tree().unwrap();
+    let entry = if msg.path.is_empty() {
+        tree.into_object()
+    } else {
+        match tree.get_path(Path::new(&msg.path[1..])) {
+            Ok(entry) => entry.to_object(repo.raw()).unwrap(),
+            Err(_) => return ApiResponse::BadRequest {
+                msg: "path not found".into(),
+            },
+        }
+    };
+
+    let resp = match entry.kind().unwrap() {
+        git2::ObjectType::Tree => TreeEntryResponse::Tree {
+            entries: entry.as_tree().unwrap().iter().map(|e| {
+                TreeEntry {
+                    id: e.id().to_string(),
+                    filename: e.name().unwrap().into(),
+                    // kind: e.kind()
+                }
+            }).collect(),
+        },
+        git2::ObjectType::Blob => TreeEntryResponse::Blob {
+            content: base64::encode(entry.as_blob().unwrap().content()) ,
+        },
+        _ => return ApiResponse::InternalServerError,
+    };
+
+    ApiResponse::Ok(resp)
 }

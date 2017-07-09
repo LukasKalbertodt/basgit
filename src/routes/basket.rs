@@ -35,13 +35,26 @@ fn handler(
     facade: Option<&str>,
 ) -> Option<Template> {
     Basket::load(basket, username, auth_user.as_ref(), &db)
-        .map(|basket| {
+        .and_then(|basket| {
             // TODO: load facade
 
             let repo = basket.open_repo();
             repo.debug();
 
             let active_facade = facade.unwrap_or("settings");
+
+            let facade = match active_facade {
+                "settings" => json!({
+                    "name": "settings",
+                    "title": "Settings",
+                }),
+                "file-browser" => json!({
+                    "name": "file-browser",
+                    "title": "File browser",
+                }),
+                _ => return None,
+            };
+
             let context = Context {
                 auth_user,
                 content: Some(json!({
@@ -50,12 +63,16 @@ fn handler(
                     "description": basket.description(),
                     "basket_url": basket.url(),
                     "facade_bar": facade_bar(&basket, active_facade, &db),
+                    "facade": facade,
                 })),
                 .. Context::default()
             };
 
-            let template = "basket/settings";
-            Template::render(template, &context)
+            let template = match active_facade {
+                "settings" => "basket/settings",
+                _ => "basket/facade",
+            };
+            Some(Template::render(template, &context))
         })
 }
 
@@ -65,7 +82,7 @@ fn facade_bar(basket: &Basket, active_facade: &str, _db: &Db) -> String {
     let mut s = String::new();
 
     let facades = [
-        ("foo", "Foo", ""),
+        ("file-browser", "Files", ""),
         ("bar", "Bar", ""),
         ("baz", "Baz", ""),
         ("settings", "Settings", "float-right"),

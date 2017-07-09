@@ -1,0 +1,22 @@
+{% extends "basket/base" %}
+
+{% block title %}{{ content.facade.title }} [{{ content.owner.username }}/{{ content.name }}] – BasGit{% endblock title %}
+{% block content %}{{ super() }}{% endblock content %}
+
+{% block facade_content %}
+    <script type='text/javascript'>
+        prepareFacade("{{ content.owner.username }}", "{{ content.name }}");
+    </script>
+    <iframe id="facade-iframe" scrolling="no" height="0" sandbox="allow-scripts allow-same-origin" srcdoc="
+        <html>
+            <head>
+                <base target='_parent'>
+                <script type='text/javascript' src='/static/facades/{{ content.facade.name }}.js'>
+                </script>
+                <link href='https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i' rel='stylesheet'>
+                <link rel='stylesheet' href='/static/main.css' />
+            </head>
+            <body style='margin: 0'></body>
+        </html>
+    "></iframe>
+{% endblock facade_content %}

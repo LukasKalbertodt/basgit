@@ -63,6 +63,7 @@ fn main() {
             api::v1::repo::tree,
             api::v1::repo::commit,
             api::v1::repo::blob,
+            api::v1::repo::tree_entry,
         ])
         .launch();
 }
