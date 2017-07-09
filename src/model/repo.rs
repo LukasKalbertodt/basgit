@@ -61,7 +61,7 @@ impl<'a> Repo<'a> {
     }
 
     pub fn debug(&self) {
-        println!("{:?}", self.repo.index().unwrap().path());
+        // println!("{:?}", self.repo.index().unwrap().path());
     }
 
     fn path(basket: &Basket) -> PathBuf {
