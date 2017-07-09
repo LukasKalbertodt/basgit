@@ -4,7 +4,7 @@
 <div class="basket-page">
     <div class="basket-header">
         <div class="basket-path-container">
-            <h1><a href="/{{ content.owner }}">{{ content.owner }}</a> / <strong><a href="/{{ content.owner }}/{{ content.name }}">{{ content.name }}</a></strong></h1>
+            <h1><a href="/{{ content.owner.username }}">{{ content.owner.username }}</a> / <strong><a href="/{{ content.owner.username }}/{{ content.name }}">{{ content.name }}</a></strong></h1>
             <div class="description-container">{% if content.description %}{{ content.description }}{% else %}<i>No description</i>{% endif %}</div>
         </div>
         <div class="fork-star-container">

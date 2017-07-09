@@ -42,7 +42,7 @@ fn handler(
             let context = Context {
                 auth_user,
                 content: Some(json!({
-                    "owner": basket.owner(),
+                    "owner": &basket.owner,
                     "name": basket.name(),
                     "description": basket.description(),
                     "basket_url": basket.url(),

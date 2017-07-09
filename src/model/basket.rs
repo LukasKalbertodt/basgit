@@ -68,12 +68,12 @@ pub struct NewBasket {
 
 pub struct Basket {
     record: BasketRecord,
-    user: PubUser,
+    pub owner: PubUser,
 }
 
 impl Basket {
-    pub fn from_parts(record: BasketRecord, user: PubUser) -> Self {
-        Self { record, user }
+    pub fn from_parts(record: BasketRecord, owner: PubUser) -> Self {
+        Self { record, owner }
     }
 
     pub fn create(
@@ -98,7 +98,7 @@ impl Basket {
         // We can unwrap, because we checked above, whether the current user
         // can create baskets for the given owner. It should have returned
         // "false" if the owner doesn't even exist.
-        let user = PubUser::from_username(&new.owner, db).unwrap();
+        let owner = PubUser::from_username(&new.owner, db).unwrap();
 
         let description = if new.description.trim().is_empty() {
             None
@@ -108,7 +108,7 @@ impl Basket {
 
         let new_basket = NewBasket {
             name: new.name,
-            user_id: user.id(),
+            user_id: owner.id(),
             description: description,
             public: new.is_public,
             kind: new.kind,
@@ -123,10 +123,10 @@ impl Basket {
             return Err(CreateError::NameAlreadyUsed);
         }
 
-        Ok(Self {
+        let out = Self {
             record: inserted.unwrap(),
-            user,
-        })
+            owner,
+        };
     }
 
     pub fn load(
@@ -143,21 +143,21 @@ impl Basket {
             .optional()
             .unwrap()
             .and_then(|(record, user)| {
-                let user = PubUser::from_user(user);
+                let owner = PubUser::from_user(user);
                 let can_view = has_permission(auth_user, UserAction::ViewBasket {
-                    owner: &user,
+                    owner: &owner,
                     basket: &record,
                 });
                 if can_view {
-                    Some(Self { record, user })
+                    Some(Self { record, owner })
                 } else {
                     None
                 }
             })
     }
 
-    pub fn owner(&self) -> &str {
-        self.user.username()
+    pub fn url(&self) -> String {
+        format!("/{}/{}", self.owner.username(), self.record.name)
     }
 
     pub fn url(&self) -> String {
@@ -185,7 +185,7 @@ impl Serialize for Basket {
         s.serialize_field("is_public", &self.is_public())?;
         s.serialize_field("url", &self.url())?;
         s.serialize_field("kind", self.kind())?;
-        s.serialize_field("owner", self.owner())?;
+        s.serialize_field("owner", &self.owner)?;
         s.end()
     }
 }

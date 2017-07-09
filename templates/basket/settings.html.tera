@@ -1,6 +1,6 @@
 {% extends "basket/base" %}
 
-{% block title %}Settings [{{ content.owner }}/{{ content.name }}] – BasGit{% endblock title %}
+{% block title %}Settings [{{ content.owner.username }}/{{ content.name }}] – BasGit{% endblock title %}
 {% block content %}{{ super() }}{% endblock content %}
 
 {% block facade_content %}
